@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case study: a slashing check that missed half the collateral — Aurelis</title>
+<meta name="description" content="How a one-line condition in a Solana validator program let under-collateralised validators keep co-signing settlements, and the fix.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231b1a17'/%3E%3Cpath d='M16 6 L26 26 H21.5 L16 14.5 L10.5 26 H6 Z' fill='%23f4f0e8'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f4f0e8;--paper2:#ebe5d8;--ink:#1b1a17;--body:#3a3832;--muted:#5f5a50;--rule:#d4ccbb;--accent:#a63d1a;--focus:#1a55c4}
+@media (prefers-color-scheme:dark){:root{--paper:#16150f;--paper2:#201e17;--ink:#f1ece0;--body:#cfc9ba;--muted:#a39d8d;--rule:#34312a;--accent:#e3764f;--focus:#7fb0ff}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font:17px/1.7 "IBM Plex Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-underline-offset:4px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.wrap{max-width:720px;margin:0 auto;padding:0 28px}
+header{border-bottom:1px solid var(--rule)}
+header .wrap{display:flex;justify-content:space-between;align-items:center;min-height:64px}
+.mark{font-family:"Newsreader",serif;font-size:22px;font-weight:500;color:var(--ink);text-decoration:none}
+.back{font-size:14px;color:var(--muted);min-height:44px;display:inline-flex;align-items:center}
+article{padding:64px 0 80px}
+.eyebrow{font:500 13px/1 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:22px}
+h1{font-family:"Newsreader",serif;font-weight:400;font-size:clamp(34px,5.5vw,48px);line-height:1.1;letter-spacing:-.015em;margin-bottom:28px;text-wrap:balance}
+h2{font-family:"Newsreader",serif;font-weight:500;font-size:26px;margin:44px 0 10px}
+p{color:var(--body);margin-bottom:16px}
+code{font:400 14px "IBM Plex Mono",monospace;background:var(--paper2);padding:2px 6px}
+pre{background:var(--paper2);padding:18px 20px;overflow-x:auto;margin:6px 0 20px;font:400 13.5px/1.6 "IBM Plex Mono",monospace;color:var(--body)}
+pre .rm{color:#b3261e}pre .ad{color:#1d7a3a}
+@media (prefers-color-scheme:dark){pre .rm{color:#ff8a80}pre .ad{color:#7fd69a}}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 22px;font-size:15px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:18px 0;margin:6px 0 10px}
+.facts dt{color:var(--muted)}.facts dd{color:var(--body)}
+.note{font-size:14.5px;color:var(--muted);border-left:2px solid var(--rule);padding-left:14px;margin-top:30px}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="mark" href="./">Aurelis</a><a class="back" href="./#work">← Back to site</a></div></header>
+<article class="wrap">
+  <p class="eyebrow">Case study · Solana smart contract</p>
+  <h1>A slashing check that only looked at half the collateral</h1>
+
+  <dl class="facts">
+    <dt>Project</dt><dd>Paraloom, a privacy-focused Solana L2</dd>
+    <dt>Component</dt><dd><code>slash_validator</code> in the Anchor program</dd>
+    <dt>Severity</dt><dd>Medium, under the project's own bounty scale</dd>
+    <dt>Report</dt><dd><a href="https://github.com/paraloom-labs/paraloom-core/issues/1406">Issue #1406</a> · <a href="https://github.com/paraloom-labs/paraloom-core/pull/1407">PR #1407</a></dd>
+  </dl>
+
+  <h2>Background</h2>
+  <p>Paraloom validators must lock two kinds of collateral to join: SOL and a protocol token. Registration enforces a minimum for both. Validators then co-sign settlements, and the network needs a supermajority of them to approve.</p>
+
+  <h2>The bug</h2>
+  <p>When the admin slashes a validator, both balances are reduced by the same percentage. The code then decides whether to deactivate the validator, and that check compared only the SOL balance to its minimum.</p>
+<pre><span class="rm">- if validator_account.stake_amount &lt; registry.minimum_stake {</span>
+<span class="ad">+ if validator_account.stake_amount &lt; registry.minimum_stake
++     || validator_account.token_stake_amount &lt; registry.min_token_stake
++ {</span>
+      validator_account.is_active = false;
+      // residual SOL and token are moved to unbonding
+  }</pre>
+  <p>So a validator with extra SOL could be slashed until its token collateral was below the required minimum, and still stay active. It kept counting toward the quorum and kept co-signing, even though it would not have been allowed to register in that state.</p>
+
+  <h2>Why it matters</h2>
+  <p>The token half exists to make misbehaviour costly. A validator that has been slashed below the token floor but stays active is exactly the case the rule was meant to remove. This is an accounting and invariant failure rather than a direct theft path, which is why I rated it Medium.</p>
+
+  <h2>The fix and the test</h2>
+  <p>The patch adds the second condition, so dropping below either floor deactivates the validator and moves both residual balances into unbonding. I added an integration test that registers a validator with surplus SOL and the minimum token stake, applies a 25% slash, and asserts that the validator is inactive, the active count and total stake are decremented, and the residual SOL and tokens are in unbonding. I also adjusted one existing test so it still leaves both balances above their floors.</p>
+
+  <p class="note">Status: submitted and awaiting maintainer review. I wrote the test against the project's existing test helpers, but I have not run the suite locally, and the project's CI has not yet been approved to run on my pull request.</p>
+</article>
+</body>
+</html>
