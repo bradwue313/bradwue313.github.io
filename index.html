@@ -1,304 +1,151 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aurelis — Systems Engineering, Security Audits & Rapid Development</title>
-  <meta name="description" content="High-assurance systems engineering, smart contract audits, and rapid code hotfixes by Aurelis. Book engineering capacity on demand with instant credit card or crypto settlement.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              400: '#818cf8',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
-    body { font-family: 'Inter', sans-serif; }
-    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
-    .glass-card {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-    .glass-card:hover {
-      border-color: rgba(99, 102, 241, 0.35);
-    }
-    .glow-bg {
-      background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15) 0%, rgba(15, 23, 42, 0) 70%);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aurelis — Bug fixes and security reviews for code that matters</title>
+<meta name="description" content="Independent engineer in New Zealand. Fixed-price bug fixes, smart contract reviews and compiler work. Public track record on GitHub.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f4f0e8; --ink:#1b1a17; --muted:#6b665c; --rule:#d9d2c3; --accent:#b4441f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font:17px/1.6 "IBM Plex Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:860px;margin:0 auto;padding:0 28px}
+header{padding:28px 0;border-bottom:1px solid var(--rule)}
+header .wrap{display:flex;justify-content:space-between;align-items:baseline}
+.mark{font-family:"Newsreader",serif;font-size:22px;font-weight:500;letter-spacing:.01em;text-decoration:none}
+nav a{font-size:14px;margin-left:26px;text-decoration:none;color:var(--muted)}
+nav a:hover{color:var(--accent)}
+.hero{padding:96px 0 72px}
+h1{font-family:"Newsreader",serif;font-weight:400;font-size:clamp(38px,6.4vw,62px);line-height:1.08;letter-spacing:-.015em;max-width:15em}
+h1 em{color:var(--accent);font-style:italic}
+.lede{margin-top:28px;max-width:34em;color:#3a3832;font-size:19px}
+.cta{margin-top:36px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-block;background:var(--ink);color:var(--paper);padding:13px 22px;text-decoration:none;font-size:15px;font-weight:500;border-radius:2px}
+.btn:hover{background:var(--accent)}
+.link{font-size:15px;text-underline-offset:4px}
+section{padding:56px 0;border-top:1px solid var(--rule)}
+h2{font-family:"Newsreader",serif;font-weight:500;font-size:28px;letter-spacing:-.005em;margin-bottom:8px}
+.sub{color:var(--muted);margin-bottom:34px;max-width:36em}
+.work li{list-style:none;padding:18px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:150px 1fr;gap:18px}
+.work li:first-child{padding-top:0}
+.work .where{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--muted);padding-top:3px}
+.work b{font-weight:600}
+.work p{color:#3a3832;font-size:16px}
+.price{display:grid;grid-template-columns:1fr auto;gap:6px 24px;padding:24px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.price:first-of-type{padding-top:0}
+.price h3{font-family:"Newsreader",serif;font-size:22px;font-weight:500}
+.price .amt{font-family:"IBM Plex Mono",monospace;font-size:18px}
+.price p{grid-column:1;color:#3a3832;font-size:16px;max-width:34em}
+.price a{grid-column:2;grid-row:2;justify-self:end;font-size:14px;font-weight:500;color:var(--accent);text-underline-offset:4px;white-space:nowrap}
+.note{margin-top:22px;font-size:14px;color:var(--muted)}
+.addr{font-family:"IBM Plex Mono",monospace;font-size:13px;word-break:break-all;background:#ebe5d8;padding:10px 12px;margin:6px 0 18px;user-select:all}
+.lbl{font-size:13px;color:var(--muted)}
+footer{padding:40px 0 64px;border-top:1px solid var(--rule);font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:620px){
+  .work li{grid-template-columns:1fr;gap:4px}
+  .price{grid-template-columns:1fr}
+  .price a{grid-column:1;grid-row:auto;justify-self:start;margin-top:6px}
+  nav a{margin-left:16px}
+  .hero{padding:64px 0 48px}
+}
+</style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-brand-500 selection:text-white">
+<body>
+<header><div class="wrap">
+  <a class="mark" href="#">Aurelis</a>
+  <nav><a href="#work">Work</a><a href="#pricing">Pricing</a><a href="#pay">Crypto</a><a href="https://github.com/bradwue313">GitHub</a></nav>
+</div></header>
 
-  <!-- Glow effect -->
-  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] glow-bg pointer-events-none -z-10"></div>
+<main>
+<div class="wrap">
+  <div class="hero">
+    <h1>Bugs found, fixed and <em>proven</em> with a test.</h1>
+    <p class="lede">I'm an independent engineer in New Zealand. I fix broken code, review smart contracts and work on compilers. You pay a fixed price and get a pull request with a regression test, not a vague report.</p>
+    <div class="cta">
+      <a class="btn" href="#pricing">See prices</a>
+      <a class="link" href="#work">Read the public work</a>
+    </div>
+  </div>
 
-  <!-- Navbar -->
-  <header class="border-b border-white/5 sticky top-0 bg-slate-950/80 backdrop-blur-md z-50">
-    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="h-9 w-9 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center font-bold text-white shadow-lg shadow-brand-500/20">
-          A
+  <section id="work">
+    <h2>Recent public work</h2>
+    <p class="sub">Everything below is on GitHub. Check it yourself rather than taking my word for it.</p>
+    <ul class="work">
+      <li>
+        <span class="where">Paraloom · Solana</span>
+        <div>
+          <p><b>Slashing left under-collateralised validators active.</b> A validator could fall below the required token stake and keep co-signing settlements. Reported with a fix and test: <a href="https://github.com/paraloom-labs/paraloom-core/issues/1406">issue #1406</a>, <a href="https://github.com/paraloom-labs/paraloom-core/pull/1407">PR #1407</a>.</p>
         </div>
-        <div class="font-bold tracking-tight text-lg">AURELIS <span class="text-xs font-normal text-slate-400 ml-1.5 px-2 py-0.5 rounded-full border border-white/10 bg-white/5">Engineering</span></div>
-      </div>
-      <nav class="hidden md:flex items-center gap-8 text-sm text-slate-400">
-        <a href="#services" class="hover:text-slate-200 transition">Services</a>
-        <a href="#track-record" class="hover:text-slate-200 transition">Track Record</a>
-        <a href="#crypto" class="hover:text-slate-200 transition">Web3 Rails</a>
-        <a href="https://github.com/bradwue313" target="_blank" rel="noopener" class="hover:text-slate-200 transition flex items-center gap-1.5">
-          GitHub
-          <svg class="w-3.5 h-3.5 opacity-70" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        </a>
-      </nav>
-      <div>
-        <a href="#services" class="text-xs font-semibold px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white shadow-md shadow-brand-600/30 transition">
-          Book Capacity
-        </a>
-      </div>
-    </div>
-  </header>
+      </li>
+      <li>
+        <span class="where">Paraloom · Solana</span>
+        <div>
+          <p><b>Token-2022 mints broke settlement.</b> The co-sign code hardcoded the classic SPL token program. <a href="https://github.com/paraloom-labs/paraloom-core/issues/1363">Issue #1363</a>, <a href="https://github.com/paraloom-labs/paraloom-core/pull/1364">PR #1364</a>.</p>
+        </div>
+      </li>
+      <li>
+        <span class="where">Go-Hybrid · Rust</span>
+        <div>
+          <p><b>Compiler diagnostics that could be bypassed.</b> Five pull requests fixing shadowing and type-parameter bugs, e.g. <a href="https://github.com/limitlessprojects/Go-Hybrid/pull/3825">#3825</a> and <a href="https://github.com/limitlessprojects/Go-Hybrid/pull/3831">#3831</a>.</p>
+        </div>
+      </li>
+    </ul>
+    <p class="note">These are open submissions. Maintainers have not necessarily merged or paid out on them yet.</p>
+  </section>
 
-  <!-- Hero Section -->
-  <section class="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
-    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 text-xs font-medium mb-6">
-      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-      Immediate Availability • &lt;4h Hotfix Turnaround
+  <section id="pricing">
+    <h2>Pricing</h2>
+    <p class="sub">Fixed prices, paid by card through Stripe. After you pay, I'll contact you to get the repository and details.</p>
+
+    <div class="price">
+      <h3>Quick fix</h3><span class="amt">$50 USD</span>
+      <p>One bug, one failing build or one small change. You get a pull request and a test.</p>
+      <a href="https://buy.stripe.com/dRm9AU9OU3cc1Ca2Cz6sw02">Pay $50 →</a>
     </div>
-    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
-      High-Assurance Engineering &amp; <span class="bg-gradient-to-r from-indigo-400 to-brand-400 bg-clip-text text-transparent">Security Audits</span>
-    </h1>
-    <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto mb-10 font-normal leading-relaxed">
-      Rapid bug fixes, smart contract vulnerability research, and systems engineering for high-stakes codebases. Transparent pricing with instant Stripe or crypto settlement.
-    </p>
-    <div class="flex flex-wrap justify-center items-center gap-4">
-      <a href="#services" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-semibold shadow-lg shadow-brand-600/25 transition">
-        View Service Tiers
-      </a>
-      <a href="https://github.com/bradwue313" target="_blank" rel="noopener" class="px-6 py-3.5 rounded-xl border border-white/10 hover:border-white/25 bg-white/5 hover:bg-white/10 text-slate-200 font-semibold transition flex items-center gap-2">
-        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-        Inspect GitHub Track Record
-      </a>
+    <div class="price">
+      <h3>Standard</h3><span class="amt">$99 USD · $150 NZD</span>
+      <p>A bigger fix or a self-contained feature, such as a module or a contract test suite.</p>
+      <a href="https://buy.stripe.com/8x2aEYd162882Geelh6sw01">Pay $99 USD →</a>
+    </div>
+    <div class="price">
+      <h3>Standard, in NZD</h3><span class="amt">$150 NZD</span>
+      <p>The same package, billed in New Zealand dollars.</p>
+      <a href="https://buy.stripe.com/14AbJ2gdieUU4Om2Cz6sw00">Pay $150 NZD →</a>
+    </div>
+    <div class="price">
+      <h3>Security review</h3><span class="amt">$499 USD</span>
+      <p>A line-by-line review of a smart contract or small codebase. You get written findings, severity ratings and suggested patches. It's an independent review, not a formal audit firm's sign-off.</p>
+      <a href="https://buy.stripe.com/7sYeVe0ekeUUbcK5OL6sw03">Pay $499 →</a>
+    </div>
+    <div class="price">
+      <h3>Monthly retainer</h3><span class="amt">$49 USD / month</span>
+      <p>Ongoing small fixes and reviews for a project you keep maintaining. Cancel any time.</p>
+      <a href="https://buy.stripe.com/eVqcN67GM000cgOelh6sw04">Subscribe →</a>
     </div>
   </section>
 
-  <!-- Track Record / Proof -->
-  <section id="track-record" class="max-w-6xl mx-auto px-6 py-12">
-    <div class="border-y border-white/5 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-      <div>
-        <div class="text-3xl font-extrabold text-white mb-1">16+</div>
-        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Verified Submissions</div>
-      </div>
-      <div>
-        <div class="text-3xl font-extrabold text-brand-400 mb-1">$1,550+</div>
-        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Bounty Pipeline</div>
-      </div>
-      <div>
-        <div class="text-3xl font-extrabold text-white mb-1">100%</div>
-        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">CI Suite Success Rate</div>
-      </div>
-      <div>
-        <div class="text-3xl font-extrabold text-emerald-400 mb-1">&lt; 4 Hours</div>
-        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Emergency Response</div>
-      </div>
-    </div>
+  <section id="pay">
+    <h2>Prefer crypto?</h2>
+    <p class="sub">USDC works too. Message me on GitHub first so we agree the scope.</p>
+    <div class="lbl">Base / EVM</div>
+    <div class="addr">0x38e0f40371be8b30f0909f890a1f701a25cd30cd</div>
+    <div class="lbl">Solana</div>
+    <div class="addr">CRdpAku2qovsPN2wGej5AbgMNtuhRQtq3GKFDFfMkJsv</div>
   </section>
+</div>
+</main>
 
-  <!-- Core Competencies -->
-  <section class="max-w-6xl mx-auto px-6 py-12">
-    <div class="text-center mb-12">
-      <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">Specialized Capabilities</h2>
-      <p class="text-slate-400 max-w-xl mx-auto text-sm">Engineered for teams who cannot afford downtime or security regressions.</p>
-    </div>
-    <div class="grid md:grid-cols-3 gap-6">
-      <div class="glass-card p-6 rounded-2xl">
-        <div class="w-10 h-10 rounded-xl bg-brand-600/20 text-brand-400 flex items-center justify-center font-bold text-xl mb-4">🛡️</div>
-        <h3 class="text-lg font-bold text-white mb-2">Smart Contract Security</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
-          Deep audit and verification across Solana (Anchor/Rust) and EVM (Solidity). Slashing math, dual-stake invariant verification, and token standard compliance.
-        </p>
-        <span class="text-xs text-brand-400 font-mono">Contributor: Paraloom L2</span>
-      </div>
-      <div class="glass-card p-6 rounded-2xl">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center font-bold text-xl mb-4">⚙️</div>
-        <h3 class="text-lg font-bold text-white mb-2">Systems &amp; Compilers</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
-          Type-checker diagnostics, AST transformation, memory safety analysis, and concurrency issue isolation in Go, Rust, and TypeScript.
-        </p>
-        <span class="text-xs text-indigo-400 font-mono">Contributor: Go-Hybrid</span>
-      </div>
-      <div class="glass-card p-6 rounded-2xl">
-        <div class="w-10 h-10 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-xl mb-4">⚡</div>
-        <h3 class="text-lg font-bold text-white mb-2">Rapid Incident Hotfixes</h3>
-        <p class="text-slate-400 text-sm leading-relaxed mb-4">
-          Stuck CI builds, broken dependencies, production panics, or failing test suites. Clean root-cause diagnosis and regression-tested pull requests.
-        </p>
-        <span class="text-xs text-emerald-400 font-mono">Turnaround: Same Day</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Pricing / Service Tiers -->
-  <section id="services" class="max-w-6xl mx-auto px-6 py-16">
-    <div class="text-center mb-14">
-      <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-3">Service Packages &amp; Checkout</h2>
-      <p class="text-slate-400 max-w-xl mx-auto text-sm">
-        Transparent fixed rates powered by Stripe. Instant receipt and direct developer access immediately upon checkout.
-      </p>
-    </div>
-
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-      
-      <!-- Tier 1 -->
-      <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
-        <div>
-          <div class="text-xs font-semibold text-brand-400 uppercase tracking-wider mb-2">Quick Fix</div>
-          <h3 class="text-xl font-bold text-white mb-2">Rapid Code Hotfix</h3>
-          <p class="text-xs text-slate-400 mb-6">Immediate resolution for breaking bugs, build failures, or minor feature repairs.</p>
-          <div class="text-3xl font-extrabold text-white mb-6">$50 <span class="text-xs text-slate-400 font-normal">USD</span></div>
-          <ul class="text-xs text-slate-300 space-y-3 mb-8">
-            <li class="flex items-center gap-2">✓ &lt; 4–12 hour turnaround</li>
-            <li class="flex items-center gap-2">✓ Root-cause diagnosis</li>
-            <li class="flex items-center gap-2">✓ Regression unit test included</li>
-            <li class="flex items-center gap-2">✓ Direct PR ready to merge</li>
-          </ul>
-        </div>
-        <a href="https://buy.stripe.com/dRm9AU9OU3cc1Ca2Cz6sw02" target="_blank" rel="noopener" class="w-full text-center py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-white/10 transition block shadow-sm">
-          Pay $50.00 — Fast Fix
-        </a>
-      </div>
-
-      <!-- Tier 2 -->
-      <div class="glass-card rounded-2xl p-6 flex flex-col justify-between relative border-brand-500/30">
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-brand-600 text-[10px] font-bold text-white uppercase tracking-wider">
-          Most Popular
-        </div>
-        <div>
-          <div class="text-xs font-semibold text-brand-400 uppercase tracking-wider mb-2">Standard</div>
-          <h3 class="text-xl font-bold text-white mb-2">Engineering Package</h3>
-          <p class="text-xs text-slate-400 mb-6">End-to-end module development, contract testing, or multi-endpoint integration.</p>
-          <div class="text-3xl font-extrabold text-white mb-6">$99 <span class="text-xs text-slate-400 font-normal">USD / $150 NZD</span></div>
-          <ul class="text-xs text-slate-300 space-y-3 mb-8">
-            <li class="flex items-center gap-2">✓ Full module / feature build</li>
-            <li class="flex items-center gap-2">✓ Anchor / Web3 test harness</li>
-            <li class="flex items-center gap-2">✓ 24–48 hour turnaround</li>
-            <li class="flex items-center gap-2">✓ Includes NZD option ($150)</li>
-          </ul>
-        </div>
-        <div class="space-y-2">
-          <a href="https://buy.stripe.com/8x2aEYd162882Geelh6sw01" target="_blank" rel="noopener" class="w-full text-center py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition block shadow-md shadow-brand-600/30">
-            Pay $99.00 USD
-          </a>
-          <a href="https://buy.stripe.com/14AbJ2gdieUU4Om2Cz6sw00" target="_blank" rel="noopener" class="w-full text-center py-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 font-medium text-[11px] border border-white/10 transition block">
-            Pay $150.00 NZD (Local)
-          </a>
-        </div>
-      </div>
-
-      <!-- Tier 3 -->
-      <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
-        <div>
-          <div class="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2">Deep Audit</div>
-          <h3 class="text-xl font-bold text-white mb-2">Security &amp; Code Audit</h3>
-          <p class="text-xs text-slate-400 mb-6">Exhaustive protocol audit, invariant verification, and actionable report.</p>
-          <div class="text-3xl font-extrabold text-white mb-6">$499 <span class="text-xs text-slate-400 font-normal">USD</span></div>
-          <ul class="text-xs text-slate-300 space-y-3 mb-8">
-            <li class="flex items-center gap-2">✓ Line-by-line security review</li>
-            <li class="flex items-center gap-2">✓ Slashing &amp; economic invariant checks</li>
-            <li class="flex items-center gap-2">✓ PoC exploits &amp; patches provided</li>
-            <li class="flex items-center gap-2">✓ Formal markdown audit deliverable</li>
-          </ul>
-        </div>
-        <a href="https://buy.stripe.com/7sYeVe0ekeUUbcK5OL6sw03" target="_blank" rel="noopener" class="w-full text-center py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-white/10 transition block shadow-sm">
-          Pay $499.00 — Book Audit
-        </a>
-      </div>
-
-      <!-- Tier 4 -->
-      <div class="glass-card rounded-2xl p-6 flex flex-col justify-between">
-        <div>
-          <div class="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-2">Ongoing</div>
-          <h3 class="text-xl font-bold text-white mb-2">Monthly Retainer</h3>
-          <p class="text-xs text-slate-400 mb-6">Continuous standby support, weekly audits, and on-demand maintenance.</p>
-          <div class="text-3xl font-extrabold text-white mb-6">$49 <span class="text-xs text-slate-400 font-normal">/ month</span></div>
-          <ul class="text-xs text-slate-300 space-y-3 mb-8">
-            <li class="flex items-center gap-2">✓ Priority support ticket queue</li>
-            <li class="flex items-center gap-2">✓ Monthly security dependency sweep</li>
-            <li class="flex items-center gap-2">✓ On-demand advisory &amp; code reviews</li>
-            <li class="flex items-center gap-2">✓ Cancel anytime</li>
-          </ul>
-        </div>
-        <a href="https://buy.stripe.com/eVqcN67GM000cgOelh6sw04" target="_blank" rel="noopener" class="w-full text-center py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-white/10 transition block shadow-sm">
-          Subscribe $49 / mo
-        </a>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Web3 Rails Section -->
-  <section id="crypto" class="max-w-4xl mx-auto px-6 py-12">
-    <div class="glass-card rounded-2xl p-8 border border-white/10">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="text-2xl">🪙</div>
-        <div>
-          <h3 class="text-lg font-bold text-white">Direct Web3 / Crypto Settlement</h3>
-          <p class="text-xs text-slate-400">Prefer decentralized settlement? We accept direct USDC on Base and Solana.</p>
-        </div>
-      </div>
-
-      <div class="space-y-4 pt-4 border-t border-white/5">
-        <div>
-          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
-            <span>Base / EVM (USDC):</span>
-            <span class="text-[11px] text-emerald-400 font-normal">Verified Mergit Escrow</span>
-          </div>
-          <div class="flex items-center gap-2 bg-slate-900 px-4 py-2.5 rounded-lg border border-white/5 font-mono text-xs text-slate-300 break-all select-all">
-            <span>0x38e0f40371be8b30f0909f890a1f701a25cd30cd</span>
-          </div>
-        </div>
-
-        <div>
-          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
-            <span>Solana (USDC / SOL):</span>
-            <span class="text-[11px] text-indigo-400 font-normal">Paraloom Bug Bounty Address</span>
-          </div>
-          <div class="flex items-center gap-2 bg-slate-900 px-4 py-2.5 rounded-lg border border-white/5 font-mono text-xs text-slate-300 break-all select-all">
-            <span>CRdpAku2qovsPN2wGej5AbgMNtuhRQtq3GKFDFfMkJsv</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="border-t border-white/5 py-12 text-center text-xs text-slate-500">
-    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2 text-slate-400">
-        <span class="font-bold text-white">Aurelis</span> • Systems Engineering &amp; Security Audits (Auckland, NZ)
-      </div>
-      <div class="flex items-center gap-6">
-        <a href="https://github.com/bradwue313" target="_blank" rel="noopener" class="hover:text-slate-300 transition">GitHub Profile</a>
-        <a href="mailto:bradwue313@gmail.com" class="hover:text-slate-300 transition">Direct Inquiry</a>
-        <a href="#services" class="hover:text-slate-300 transition">Stripe Checkout</a>
-      </div>
-    </div>
-  </footer>
-
+<footer><div class="wrap">
+  <span>© Aurelis · New Zealand</span>
+  <span><a href="https://github.com/bradwue313">github.com/bradwue313</a></span>
+</div></footer>
 </body>
 </html>
