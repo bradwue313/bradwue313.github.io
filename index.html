@@ -3,149 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aurelis — Bug fixes and security reviews for code that matters</title>
-<meta name="description" content="Independent engineer in New Zealand. Fixed-price bug fixes, smart contract reviews and compiler work. Public track record on GitHub.">
+<title>Aurelis — Bug fixes and security reviews, fixed price</title>
+<meta name="description" content="Independent engineer in New Zealand. Fixed-price bug fixes, smart contract reviews and compiler work, delivered as a pull request with a test. Public track record on GitHub.">
+<meta property="og:title" content="Aurelis — Bug fixes and security reviews, fixed price">
+<meta property="og:description" content="Fixed-price bug fixes and smart contract reviews, delivered as a pull request with a test.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f4f0e8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231b1a17'/%3E%3Cpath d='M16 6 L26 26 H21.5 L16 14.5 L10.5 26 H6 Z' fill='%23f4f0e8'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#f4f0e8; --ink:#1b1a17; --muted:#6b665c; --rule:#d9d2c3; --accent:#b4441f;
+  --paper:#f4f0e8; --paper2:#ebe5d8; --ink:#1b1a17; --body:#3a3832; --muted:#5f5a50;
+  --rule:#d4ccbb; --accent:#a63d1a; --focus:#1a55c4;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#16150f; --paper2:#201e17; --ink:#f1ece0; --body:#cfc9ba; --muted:#a39d8d;
+        --rule:#34312a; --accent:#e3764f; --focus:#7fb0ff}
+  meta[name=theme-color]{content:#16150f}
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--paper);color:var(--ink);font:17px/1.6 "IBM Plex Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:inherit}
-.wrap{max-width:860px;margin:0 auto;padding:0 28px}
-header{padding:28px 0;border-bottom:1px solid var(--rule)}
-header .wrap{display:flex;justify-content:space-between;align-items:baseline}
-.mark{font-family:"Newsreader",serif;font-size:22px;font-weight:500;letter-spacing:.01em;text-decoration:none}
-nav a{font-size:14px;margin-left:26px;text-decoration:none;color:var(--muted)}
-nav a:hover{color:var(--accent)}
-.hero{padding:96px 0 72px}
-h1{font-family:"Newsreader",serif;font-weight:400;font-size:clamp(38px,6.4vw,62px);line-height:1.08;letter-spacing:-.015em;max-width:15em}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{background:var(--paper);color:var(--ink);font:17px/1.65 "IBM Plex Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-underline-offset:4px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:2px}
+.skip{position:absolute;left:12px;top:-60px;background:var(--ink);color:var(--paper);padding:10px 16px;z-index:100;border-radius:2px}
+.skip:focus{top:12px}
+.wrap{max-width:880px;margin:0 auto;padding:0 28px}
+
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+header .wrap{display:flex;justify-content:space-between;align-items:center;min-height:64px}
+.mark{display:flex;align-items:center;gap:10px;font-family:"Newsreader",serif;font-size:22px;font-weight:500;text-decoration:none}
+.mark svg{width:22px;height:22px}
+nav{display:flex;gap:4px}
+nav a{font-size:14px;color:var(--muted);text-decoration:none;padding:12px 12px;min-height:44px;display:inline-flex;align-items:center;border-bottom:2px solid transparent;cursor:pointer;transition:color .2s var(--ease),border-color .2s var(--ease)}
+nav a:hover{color:var(--ink)}
+nav a.on{color:var(--ink);border-bottom-color:var(--accent)}
+
+.hero{padding:104px 0 80px}
+.eyebrow{font:500 13px/1 "IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:26px}
+h1{font-family:"Newsreader",serif;font-weight:400;font-size:clamp(40px,6.6vw,66px);line-height:1.06;letter-spacing:-.018em;max-width:14em;text-wrap:balance}
 h1 em{color:var(--accent);font-style:italic}
-.lede{margin-top:28px;max-width:34em;color:#3a3832;font-size:19px}
-.cta{margin-top:36px;display:flex;gap:22px;align-items:center;flex-wrap:wrap}
-.btn{display:inline-block;background:var(--ink);color:var(--paper);padding:13px 22px;text-decoration:none;font-size:15px;font-weight:500;border-radius:2px}
-.btn:hover{background:var(--accent)}
-.link{font-size:15px;text-underline-offset:4px}
-section{padding:56px 0;border-top:1px solid var(--rule)}
-h2{font-family:"Newsreader",serif;font-weight:500;font-size:28px;letter-spacing:-.005em;margin-bottom:8px}
-.sub{color:var(--muted);margin-bottom:34px;max-width:36em}
-.work li{list-style:none;padding:18px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:150px 1fr;gap:18px}
+.lede{margin-top:28px;max-width:33em;color:var(--body);font-size:19px}
+.cta{margin-top:38px;display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;min-height:48px;background:var(--ink);color:var(--paper);padding:0 24px;text-decoration:none;font-size:15px;font-weight:500;border-radius:2px;cursor:pointer;transition:background .2s var(--ease),transform .2s var(--ease)}
+.btn:hover{background:var(--accent);transform:translateY(-1px)}
+.link{font-size:15px;cursor:pointer;display:inline-flex;min-height:44px;align-items:center}
+
+section{padding:64px 0;border-top:1px solid var(--rule)}
+h2{font-family:"Newsreader",serif;font-weight:500;font-size:30px;letter-spacing:-.01em;margin-bottom:8px}
+.sub{color:var(--muted);margin-bottom:36px;max-width:36em}
+
+.steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:28px;counter-reset:s}
+.steps li{counter-increment:s;border-top:2px solid var(--ink);padding-top:16px}
+.steps li::before{content:"0" counter(s);font:500 13px/1 "IBM Plex Mono",monospace;color:var(--accent);display:block;margin-bottom:12px}
+.steps b{display:block;font-family:"Newsreader",serif;font-size:21px;font-weight:500;margin-bottom:6px}
+.steps p{font-size:15.5px;color:var(--body)}
+
+.work{list-style:none}
+.work li{padding:20px 0;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:160px 1fr;gap:20px}
 .work li:first-child{padding-top:0}
-.work .where{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--muted);padding-top:3px}
-.work b{font-weight:600}
-.work p{color:#3a3832;font-size:16px}
-.price{display:grid;grid-template-columns:1fr auto;gap:6px 24px;padding:24px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.where{font:400 13px/1.5 "IBM Plex Mono",monospace;color:var(--muted);padding-top:4px}
+.work p{color:var(--body);font-size:16.5px}
+.work b{color:var(--ink);font-weight:600}
+.note{margin-top:24px;font-size:14.5px;color:var(--muted);padding-left:14px;border-left:2px solid var(--rule)}
+
+.price{display:grid;grid-template-columns:1fr auto;gap:4px 28px;padding:26px 0;border-bottom:1px solid var(--rule);align-items:baseline}
 .price:first-of-type{padding-top:0}
-.price h3{font-family:"Newsreader",serif;font-size:22px;font-weight:500}
-.price .amt{font-family:"IBM Plex Mono",monospace;font-size:18px}
-.price p{grid-column:1;color:#3a3832;font-size:16px;max-width:34em}
-.price a{grid-column:2;grid-row:2;justify-self:end;font-size:14px;font-weight:500;color:var(--accent);text-underline-offset:4px;white-space:nowrap}
-.note{margin-top:22px;font-size:14px;color:var(--muted)}
-.addr{font-family:"IBM Plex Mono",monospace;font-size:13px;word-break:break-all;background:#ebe5d8;padding:10px 12px;margin:6px 0 18px;user-select:all}
-.lbl{font-size:13px;color:var(--muted)}
-footer{padding:40px 0 64px;border-top:1px solid var(--rule);font-size:14px;color:var(--muted)}
+.price h3{font-family:"Newsreader",serif;font-size:23px;font-weight:500}
+.amt{font:500 18px/1 "IBM Plex Mono",monospace;text-align:right}
+.price p{color:var(--body);font-size:16px;max-width:34em;margin-top:2px}
+.buy{grid-column:2;grid-row:2;justify-self:end;display:flex;gap:18px;flex-wrap:wrap;justify-content:flex-end}
+.buy a{font-size:14.5px;font-weight:500;color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;min-height:44px;white-space:nowrap}
+.buy a:hover{color:var(--ink)}
+
+.faq details{border-bottom:1px solid var(--rule)}
+.faq summary{cursor:pointer;list-style:none;padding:20px 32px 20px 0;font-family:"Newsreader",serif;font-size:20px;position:relative;min-height:44px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:4px;top:16px;font:400 24px/1 "IBM Plex Mono",monospace;color:var(--accent);transition:transform .25s var(--ease)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{padding:0 0 22px;color:var(--body);max-width:38em;font-size:16px}
+
+.lbl{font-size:13.5px;color:var(--muted);margin-top:4px}
+.addr{display:flex;gap:10px;align-items:stretch;margin:6px 0 20px}
+.addr code{flex:1;font:400 13px/1.5 "IBM Plex Mono",monospace;word-break:break-all;background:var(--paper2);padding:12px 14px;user-select:all}
+.addr button{font:500 13px "IBM Plex Sans",sans-serif;background:transparent;color:var(--ink);border:1px solid var(--ink);padding:0 16px;min-width:76px;min-height:44px;cursor:pointer;border-radius:2px;transition:background .2s var(--ease),color .2s var(--ease)}
+.addr button:hover{background:var(--ink);color:var(--paper)}
+
+footer{padding:44px 0 72px;border-top:1px solid var(--rule);font-size:14.5px;color:var(--muted)}
 footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
-@media(max-width:620px){
+footer a{cursor:pointer}
+
+.rv{opacity:0;transform:translateY(12px);transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important}
+  .rv{opacity:1;transform:none}
+}
+@media (max-width:680px){
+  .steps{grid-template-columns:1fr;gap:22px}
   .work li{grid-template-columns:1fr;gap:4px}
   .price{grid-template-columns:1fr}
-  .price a{grid-column:1;grid-row:auto;justify-self:start;margin-top:6px}
-  nav a{margin-left:16px}
-  .hero{padding:64px 0 48px}
+  .amt{text-align:left;margin:4px 0 6px}
+  .buy{grid-column:1;grid-row:auto;justify-self:start;justify-content:flex-start;margin-top:4px}
+  nav a{padding:12px 8px}
+  .hero{padding:64px 0 52px}
+  .mark span{display:none}
 }
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
+
 <header><div class="wrap">
-  <a class="mark" href="#">Aurelis</a>
-  <nav><a href="#work">Work</a><a href="#pricing">Pricing</a><a href="#pay">Crypto</a><a href="https://github.com/bradwue313">GitHub</a></nav>
+  <a class="mark" href="#top" aria-label="Aurelis home">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 L28 28 H22.5 L16 14.5 L9.5 28 H4 Z" fill="currentColor"/></svg>
+    <span>Aurelis</span>
+  </a>
+  <nav aria-label="Primary">
+    <a href="#how">How it works</a>
+    <a href="#work">Work</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+  </nav>
 </div></header>
 
-<main>
-<div class="wrap">
+<main id="main">
+<div class="wrap" id="top">
   <div class="hero">
+    <p class="eyebrow">Independent engineer · New Zealand</p>
     <h1>Bugs found, fixed and <em>proven</em> with a test.</h1>
-    <p class="lede">I'm an independent engineer in New Zealand. I fix broken code, review smart contracts and work on compilers. You pay a fixed price and get a pull request with a regression test, not a vague report.</p>
+    <p class="lede">I fix broken code, review smart contracts and work on compilers. You pay a fixed price and get a pull request with a regression test, not a vague report.</p>
     <div class="cta">
       <a class="btn" href="#pricing">See prices</a>
       <a class="link" href="#work">Read the public work</a>
     </div>
   </div>
 
-  <section id="work">
+  <section id="how" class="rv">
+    <h2>How it works</h2>
+    <p class="sub">No sales call and no proposal documents.</p>
+    <ol class="steps">
+      <li><b>Pick a package</b><p>Choose the size that fits the problem and pay by card through Stripe.</p></li>
+      <li><b>Send the details</b><p>After paying, I'll get in touch for repository access and a description of the issue.</p></li>
+      <li><b>Get a pull request</b><p>You receive a fix with a test that fails before the change and passes after it.</p></li>
+    </ol>
+  </section>
+
+  <section id="work" class="rv">
     <h2>Recent public work</h2>
     <p class="sub">Everything below is on GitHub. Check it yourself rather than taking my word for it.</p>
     <ul class="work">
       <li>
         <span class="where">Paraloom · Solana</span>
-        <div>
-          <p><b>Slashing left under-collateralised validators active.</b> A validator could fall below the required token stake and keep co-signing settlements. Reported with a fix and test: <a href="https://github.com/paraloom-labs/paraloom-core/issues/1406">issue #1406</a>, <a href="https://github.com/paraloom-labs/paraloom-core/pull/1407">PR #1407</a>.</p>
-        </div>
+        <p><b>Slashing left under-collateralised validators active.</b> A validator could fall below the required token stake and keep co-signing settlements. Reported with a fix and test: <a href="https://github.com/paraloom-labs/paraloom-core/issues/1406">issue #1406</a>, <a href="https://github.com/paraloom-labs/paraloom-core/pull/1407">PR #1407</a>.</p>
       </li>
       <li>
         <span class="where">Paraloom · Solana</span>
-        <div>
-          <p><b>Token-2022 mints broke settlement.</b> The co-sign code hardcoded the classic SPL token program. <a href="https://github.com/paraloom-labs/paraloom-core/issues/1363">Issue #1363</a>, <a href="https://github.com/paraloom-labs/paraloom-core/pull/1364">PR #1364</a>.</p>
-        </div>
+        <p><b>Token-2022 mints broke settlement.</b> The co-sign code hardcoded the classic SPL token program. <a href="https://github.com/paraloom-labs/paraloom-core/issues/1363">Issue #1363</a>, <a href="https://github.com/paraloom-labs/paraloom-core/pull/1364">PR #1364</a>.</p>
       </li>
       <li>
         <span class="where">Go-Hybrid · Rust</span>
-        <div>
-          <p><b>Compiler diagnostics that could be bypassed.</b> Five pull requests fixing shadowing and type-parameter bugs, e.g. <a href="https://github.com/limitlessprojects/Go-Hybrid/pull/3825">#3825</a> and <a href="https://github.com/limitlessprojects/Go-Hybrid/pull/3831">#3831</a>.</p>
-        </div>
+        <p><b>Compiler diagnostics that could be bypassed.</b> Five pull requests fixing shadowing and type-parameter bugs, for example <a href="https://github.com/limitlessprojects/Go-Hybrid/pull/3825">#3825</a> and <a href="https://github.com/limitlessprojects/Go-Hybrid/pull/3831">#3831</a>.</p>
       </li>
     </ul>
     <p class="note">These are open submissions. Maintainers have not necessarily merged or paid out on them yet.</p>
   </section>
 
-  <section id="pricing">
+  <section id="pricing" class="rv">
     <h2>Pricing</h2>
-    <p class="sub">Fixed prices, paid by card through Stripe. After you pay, I'll contact you to get the repository and details.</p>
+    <p class="sub">Fixed prices in USD unless stated. Payments are handled by Stripe, so I never see your card details.</p>
 
     <div class="price">
-      <h3>Quick fix</h3><span class="amt">$50 USD</span>
+      <h3>Quick fix</h3><span class="amt">$50</span>
       <p>One bug, one failing build or one small change. You get a pull request and a test.</p>
-      <a href="https://buy.stripe.com/dRm9AU9OU3cc1Ca2Cz6sw02">Pay $50 →</a>
+      <div class="buy"><a href="https://buy.stripe.com/dRm9AU9OU3cc1Ca2Cz6sw02">Pay $50 →</a></div>
     </div>
     <div class="price">
-      <h3>Standard</h3><span class="amt">$99 USD · $150 NZD</span>
+      <h3>Standard</h3><span class="amt">$99 · NZ$150</span>
       <p>A bigger fix or a self-contained feature, such as a module or a contract test suite.</p>
-      <a href="https://buy.stripe.com/8x2aEYd162882Geelh6sw01">Pay $99 USD →</a>
+      <div class="buy">
+        <a href="https://buy.stripe.com/8x2aEYd162882Geelh6sw01">Pay $99 USD →</a>
+        <a href="https://buy.stripe.com/14AbJ2gdieUU4Om2Cz6sw00">Pay NZ$150 →</a>
+      </div>
     </div>
     <div class="price">
-      <h3>Standard, in NZD</h3><span class="amt">$150 NZD</span>
-      <p>The same package, billed in New Zealand dollars.</p>
-      <a href="https://buy.stripe.com/14AbJ2gdieUU4Om2Cz6sw00">Pay $150 NZD →</a>
+      <h3>Security review</h3><span class="amt">$499</span>
+      <p>A line-by-line review of a smart contract or small codebase, with written findings, severity ratings and suggested patches. This is an independent review, not a formal audit firm's sign-off.</p>
+      <div class="buy"><a href="https://buy.stripe.com/7sYeVe0ekeUUbcK5OL6sw03">Pay $499 →</a></div>
     </div>
     <div class="price">
-      <h3>Security review</h3><span class="amt">$499 USD</span>
-      <p>A line-by-line review of a smart contract or small codebase. You get written findings, severity ratings and suggested patches. It's an independent review, not a formal audit firm's sign-off.</p>
-      <a href="https://buy.stripe.com/7sYeVe0ekeUUbcK5OL6sw03">Pay $499 →</a>
-    </div>
-    <div class="price">
-      <h3>Monthly retainer</h3><span class="amt">$49 USD / month</span>
+      <h3>Monthly retainer</h3><span class="amt">$49 / mo</span>
       <p>Ongoing small fixes and reviews for a project you keep maintaining. Cancel any time.</p>
-      <a href="https://buy.stripe.com/eVqcN67GM000cgOelh6sw04">Subscribe →</a>
+      <div class="buy"><a href="https://buy.stripe.com/eVqcN67GM000cgOelh6sw04">Subscribe →</a></div>
     </div>
   </section>
 
-  <section id="pay">
+  <section id="faq" class="rv faq">
+    <h2>Questions</h2>
+    <p class="sub">Short answers to what people usually ask first.</p>
+    <details>
+      <summary>What if my problem doesn't fit a package?</summary>
+      <p>Message me on GitHub before paying and describe it. If it's out of scope or I can't help, I'll say so up front.</p>
+    </details>
+    <details>
+      <summary>Which languages and stacks?</summary>
+      <p>Mostly Rust, Solana and Anchor, Go, and TypeScript. Smart contract work is my strongest area.</p>
+    </details>
+    <details>
+      <summary>What if I'm not happy with the result?</summary>
+      <p>Tell me what's wrong and I'll revise it. If the fix doesn't hold up, contact me through GitHub and we'll sort it out.</p>
+    </details>
+    <details>
+      <summary>Is the security review an audit?</summary>
+      <p>No. It's an independent review by one engineer. It's useful for catching real bugs, but it isn't a substitute for a formal audit before launching something that holds significant funds.</p>
+    </details>
+  </section>
+
+  <section id="pay" class="rv">
     <h2>Prefer crypto?</h2>
     <p class="sub">USDC works too. Message me on GitHub first so we agree the scope.</p>
     <div class="lbl">Base / EVM</div>
-    <div class="addr">0x38e0f40371be8b30f0909f890a1f701a25cd30cd</div>
+    <div class="addr"><code id="a1">0x38e0f40371be8b30f0909f890a1f701a25cd30cd</code><button type="button" data-copy="a1" aria-label="Copy Base address">Copy</button></div>
     <div class="lbl">Solana</div>
-    <div class="addr">CRdpAku2qovsPN2wGej5AbgMNtuhRQtq3GKFDFfMkJsv</div>
+    <div class="addr"><code id="a2">CRdpAku2qovsPN2wGej5AbgMNtuhRQtq3GKFDFfMkJsv</code><button type="button" data-copy="a2" aria-label="Copy Solana address">Copy</button></div>
   </section>
 </div>
 </main>
 
 <footer><div class="wrap">
   <span>© Aurelis · New Zealand</span>
-  <span><a href="https://github.com/bradwue313">github.com/bradwue313</a></span>
+  <a href="https://github.com/bradwue313">github.com/bradwue313</a>
 </div></footer>
+
+<script>
+// scroll reveal
+const rv=[...document.querySelectorAll('.rv')];
+if('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion:reduce)').matches){
+  const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.08});
+  rv.forEach(el=>io.observe(el));
+}else rv.forEach(el=>el.classList.add('in'));
+// active nav
+const links=[...document.querySelectorAll('nav a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+const so=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+x.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});
+secs.forEach(s=>s&&so.observe(s));
+// copy
+document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{
+  const t=document.getElementById(b.dataset.copy).textContent;
+  try{await navigator.clipboard.writeText(t);b.textContent='Copied'}catch{b.textContent='Select'}
+  setTimeout(()=>b.textContent='Copy',1600);
+}));
+</script>
 </body>
 </html>
