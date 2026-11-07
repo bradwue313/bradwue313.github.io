@@ -527,6 +527,9 @@ function plainEnglishSummary(title, repo) {
   if (t.includes('divassign') || t.includes('modassign') || t.includes('hyb-e6001')) {
     return 'Fixed divide-by-zero crash check for decimal numbers';
   }
+  if (t.includes('non-variadic built-ins') || t.includes('variadic spread')) {
+    return 'Fixed list expansion check on built-in commands (panic, make, print)';
+  }
   if (t.includes('bare const len') || (t.includes('range_iter') && t.includes('hyhi'))) {
     return 'Fixed loop bound check for constant strings paired with custom number sizes';
   }
