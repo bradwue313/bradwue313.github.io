@@ -129,7 +129,7 @@ footer a{cursor:pointer}
     <a href="#work">Work</a>
     <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
-    <a href="#terms">Terms</a>
+    <a href="#terms">Terms</a>`n    <a href="/tracker.html" class="tracker-nav" style="color:var(--accent);font-weight:600;">Tracker &rarr;</a>
   </nav>
 </div></header>
 
@@ -145,35 +145,6 @@ footer a{cursor:pointer}
       <a class="link" href="mailto:aurelis.work@gmail.com">aurelis.work@gmail.com</a>
     </div>
   </div>
-
-    <section id="scanner" class="rv" style="background:var(--paper2);border:1px solid var(--rule);border-radius:8px;padding:36px 32px;margin-bottom:48px;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:12px;">
-      <h2 style="font-size:24px;margin:0;">Instant Security &amp; Invariant Pre-Scan</h2>
-      <span style="font:500 12px/1 'IBM Plex Mono',monospace;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;">Multi-Agent Automated Triage</span>
-    </div>
-    <p class="sub" style="margin-bottom:20px;">Paste a public GitHub repo or smart contract address. Test your code against reentrancy, vault share inflation, compiler unsoundness, and invariant drift.</p>
-    
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
-      <input type="text" id="scan-target" placeholder="e.g. github.com/owner/repo or 0x38e0...30cd" style="flex:1;min-width:260px;min-height:48px;padding:0 16px;font:400 15px 'IBM Plex Mono',monospace;background:var(--paper);color:var(--ink);border:1px solid var(--rule);border-radius:3px;">
-      <button type="button" class="btn" id="scan-btn" onclick="runScan()" style="white-space:nowrap;">Run Security Pre-Scan</button>
-    </div>
-
-    <div id="scan-terminal" style="display:none;background:#0d1117;color:#58a6ff;font:13px/1.6 'IBM Plex Mono',monospace;padding:20px;border-radius:6px;border:1px solid #30363d;margin-top:16px;max-height:260px;overflow-y:auto;">
-      <div id="scan-logs"></div>
-    </div>
-
-    <div id="scan-result" style="display:none;margin-top:20px;padding:20px;background:var(--paper);border:1px solid var(--accent);border-radius:6px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <strong style="color:var(--accent);font-size:16px;">Scan Findings Summary</strong>
-        <span style="font:500 12px 'IBM Plex Mono',monospace;padding:3px 8px;background:var(--accent);color:#fff;border-radius:3px;">3 VULNERABILITIES FLAGGED</span>
-      </div>
-      <p style="font-size:14.5px;color:var(--body);margin-bottom:14px;">Identified 1 high-severity arithmetic rounding discrepancy, 1 unhandled receiver error path, and 1 state reentrancy hazard.</p>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;">
-        <a class="btn" style="min-height:40px;font-size:13.5px;" href="#pricing">Get Tested Fix PR ($50) &rarr;</a>
-        <a href="mailto:aurelis.work@gmail.com?subject=Security%20Scan%20Inquiry" style="font-size:13.5px;color:var(--accent);text-decoration:underline;">Request Custom Review</a>
-      </div>
-    </div>
-  </section>
 
   <section id="how" class="rv">
     <h2>How it works</h2>
@@ -308,49 +279,6 @@ const links=[...document.querySelectorAll('nav a')];
 const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
 const so=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+x.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});
 secs.forEach(s=>s&&so.observe(s));
-function runScan() {
-  const target = document.getElementById('scan-target').value.trim() || 'github.com/example/protocol';
-  const term = document.getElementById('scan-terminal');
-  const logs = document.getElementById('scan-logs');
-  const res = document.getElementById('scan-result');
-  const btn = document.getElementById('scan-btn');
-  
-  term.style.display = 'block';
-  res.style.display = 'none';
-  btn.disabled = true;
-  btn.textContent = 'Scanning...';
-  logs.innerHTML = '';
-
-  const steps = [
-    `[+] Initializing scanner target: ${target}`,
-    `[+] Resolving AST symbols & contract interface definitions...`,
-    `[*] Running automated invariant checks across state transitions...`,
-    `[*] Checking ERC4626 / Vault share rounding & inflation tripwires...`,
-    `[*] Checking external call ordering & nonReentrant mutex guards...`,
-    `[*] Verifying compiler buildability & foreign dependency surfaces...`,
-    `[!] FLAG: Potential rounding asymmetry detected on deposit/mint division`,
-    `[!] FLAG: Callee result tuple missing exhaustive destructuring check`,
-    `[✓] Pre-scan complete: 2 High / 1 Medium potential invariant issues flagged.`
-  ];
-
-  let i = 0;
-  const interval = setInterval(() => {
-    if (i < steps.length) {
-      const p = document.createElement('div');
-      p.style.color = steps[i].startsWith('[!]') ? '#f85149' : (steps[i].startsWith('[✓]') ? '#3fb950' : '#58a6ff');
-      p.textContent = steps[i];
-      logs.appendChild(p);
-      term.scrollTop = term.scrollHeight;
-      i++;
-    } else {
-      clearInterval(interval);
-      btn.disabled = false;
-      btn.textContent = 'Run Security Pre-Scan';
-      res.style.display = 'block';
-    }
-  }, 350);
-}
-
 // copy
 document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{
   const t=document.getElementById(b.dataset.copy).textContent;
