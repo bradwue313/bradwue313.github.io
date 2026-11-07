@@ -346,10 +346,10 @@
       if (t.includes('run_type_arg_expr') || t.includes('hyb-e1001')) {
         return 'Fixed undeclared type name check inside make() and new() calls';
       }
-      if (t.includes('builtin') || t.includes('closure')) {
+      if (t.includes('builtin') || t.includes('closure') || t.includes('hyb-e2005')) {
         return 'Fixed variable scope leak inside nested closure blocks';
       }
-      if (t.includes('static_result_count') || t.includes('hyb-e2002')) {
+      if (t.includes('static_result_count') || t.includes('foreign_receiver_result_count') || t.includes('hyb-e2002')) {
         return 'Fixed multi-value return count check on library methods';
       }
       if (t.includes('const_overflow') || t.includes('hyb-e6002') || t.includes('hyb-e6006')) {
