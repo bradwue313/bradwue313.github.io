@@ -517,6 +517,9 @@ function plainEnglishSummary(title, repo) {
   if (t.includes('divassign') || t.includes('modassign') || t.includes('hyb-e6001')) {
     return 'Fixed divide-by-zero crash check for decimal numbers';
   }
+  if (t.includes('address-of assignment targets') || (t.includes('check_assign_target_addressable') && t.includes('hyb-e2010'))) {
+    return 'Fixed assignment target check to reject invalid address-of places';
+  }
   if (t.includes('package qualifier') || t.includes('shadowed package')) {
     return 'Fixed package name shadowing check in type definitions';
   }
