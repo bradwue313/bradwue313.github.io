@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Live Bounty Tracker — bradwue313</title>
+  <title>Live Bounty Tracker â€” bradwue313</title>
   <style>
     :root {
       --bg: #0b0f17;
@@ -270,6 +270,14 @@
     </p>
   </header>
 
+    <section style="background:#0f241a;border:1px solid #10b981;border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-size:0.75rem;font-weight:700;color:#34d399;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px;">Official Payout Claim Registered</div>
+      <div style="font-size:0.95rem;color:#f0f6fc;font-weight:600;">Discussion #295 &bull; 3 Merged Commit SHAs Recorded &bull; 22 PRs in Queue</div>
+    </div>
+    <a href="https://github.com/limitlessprojects/Go-Hybrid/discussions/295#discussioncomment-19455873" target="_blank" rel="noopener" style="background:#10b981;color:#0b0f17;padding:8px 14px;border-radius:6px;font-weight:700;font-size:0.82rem;text-decoration:none;">View On GitHub &rarr;</a>
+  </section>
+
   <section class="scoreboard">
     <div class="score-box">
       <span class="score-label">Accepted Fixes</span>
@@ -405,7 +413,7 @@
           <a class="pr-card" href="${pr.url}" target="_blank" rel="noopener">
             <div class="pr-top">
               <span class="badge ${badgeClass}">${badgeText}</span>
-              <span class="pr-meta">${pr.repo} <strong>#${pr.number}</strong> • Updated ${timeAgo(pr.updated_at)}</span>
+              <span class="pr-meta">${pr.repo} <strong>#${pr.number}</strong> â€¢ Updated ${timeAgo(pr.updated_at)}</span>
             </div>
             <div class="pr-plain">${pr.plain}</div>
             <div class="pr-tech">Technical title: ${pr.title}</div>
@@ -507,7 +515,7 @@
         const now = new Date();
         document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString()}`;
       } catch (err) {
-        document.getElementById('last-updated').textContent = 'Update error — tap Refresh';
+        document.getElementById('last-updated').textContent = 'Update error â€” tap Refresh';
       } finally {
         btn.disabled = false;
         btn.textContent = 'Refresh Now';
