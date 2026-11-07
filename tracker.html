@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aurelis — Live Bounty Tracker & Submissions</title>
+<title>Aurelis â€” Live Bounty Tracker & Submissions</title>
 <meta name="description" content="Live auto-updating tracker of bug fixes, compiler soundness pull requests, and on-chain bounty settlements by Aurelis (@bradwue313).">
 <meta name="theme-color" content="#f4f0e8">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231b1a17'/%3E%3Cpath d='M16 6 L26 26 H21.5 L16 14.5 L10.5 26 H6 Z' fill='%23f4f0e8'/%3E%3C/svg%3E">
@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
+  color-scheme: light dark;
   --paper: #f4f0e8;
   --paper2: #ebe5d8;
   --ink: #1b1a17;
@@ -28,6 +29,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
+  color-scheme: light dark;
     --paper: #16150f;
     --paper2: #201e17;
     --ink: #f1ece0;
@@ -124,6 +126,7 @@ nav a.on { color: var(--ink); border-bottom-color: var(--accent); }
 }
 
 h1 {
+  text-wrap: balance;
   font-family: "Newsreader", serif;
   font-weight: 400;
   font-size: clamp(34px, 5.2vw, 54px);
@@ -416,7 +419,7 @@ footer .wrap {
     <div class="sync-bar">
       <span>Auto-syncing with GitHub API &amp; Base/Solana RPCs</span>
       <div style="display:flex;align-items:center;gap:12px;">
-        <span id="last-updated">Checking updates...</span>
+        <span id="last-updated" aria-live="polite" role="status">Checking updates...</span>
         <button class="btn-refresh" id="refresh-btn" onclick="loadAll()">Refresh Now</button>
       </div>
     </div>
@@ -434,12 +437,12 @@ footer .wrap {
   <section class="scoreboard">
     <div class="score-box">
       <span class="score-label">Accepted Fixes</span>
-      <span class="score-val c-green" id="count-accepted">-</span>
+      <span class="score-val c-green" id="count-accepted" aria-live="polite">-</span>
       <span class="score-sub">Officially merged to main</span>
     </div>
     <div class="score-box">
       <span class="score-label">Waiting in Queue</span>
-      <span class="score-val c-yellow" id="count-open">-</span>
+      <span class="score-val c-yellow" id="count-open" aria-live="polite">-</span>
       <span class="score-sub">Pending maintainer drain</span>
     </div>
     <div class="score-box">
@@ -468,11 +471,16 @@ footer .wrap {
     </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="setFilter('all', this)">All Submissions</button>
-    <button class="tab-btn" onclick="setFilter('accepted', this)">Accepted (Merged)</button>
-    <button class="tab-btn" onclick="setFilter('open', this)">Waiting in Queue</button>
-    <button class="tab-btn" onclick="setFilter('closed', this)">Closed / Superseded</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+    <div class="tabs" style="margin-bottom:0;border-bottom:none;padding-bottom:0;">
+      <button class="tab-btn active" id="tab-all" onclick="setFilter('all', this)">All Submissions (<span id="tab-count-all">-</span>)</button>
+      <button class="tab-btn" id="tab-accepted" onclick="setFilter('accepted', this)">Accepted (<span id="tab-count-accepted">-</span>)</button>
+      <button class="tab-btn" id="tab-open" onclick="setFilter('open', this)">Waiting in Queue (<span id="tab-count-open">-</span>)</button>
+      <button class="tab-btn" id="tab-closed" onclick="setFilter('closed', this)">Closed (<span id="tab-count-closed">-</span>)</button>
+    </div>
+    <div style="flex:1;max-width:280px;min-width:200px;">
+      <input type="text" id="pr-search" placeholder="Search fixes (e.g. tuple, range, dialer)..." oninput="renderPRs()" style="width:100%;height:38px;padding:0 12px;font:400 13px 'IBM Plex Mono',monospace;background:var(--paper2);color:var(--ink);border:1px solid var(--rule);border-radius:2px;">
+    </div>
   </div>
 
   <div class="pr-list" id="pr-list">
@@ -542,20 +550,26 @@ function setFilter(filter, btn) {
   currentFilter = filter;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderPRs();
+  updateTabCounts();
+      renderPRs();
 }
 
 function renderPRs() {
   const container = document.getElementById('pr-list');
+  const search = (document.getElementById('pr-search') ? document.getElementById('pr-search').value.toLowerCase().trim() : '');
+
   const filtered = allPRs.filter(pr => {
-    if (currentFilter === 'accepted') return pr.status === 'accepted';
-    if (currentFilter === 'open') return pr.status === 'open';
-    if (currentFilter === 'closed') return pr.status === 'closed';
+    if (currentFilter === 'accepted' && pr.status !== 'accepted') return false;
+    if (currentFilter === 'open' && pr.status !== 'open') return false;
+    if (currentFilter === 'closed' && pr.status !== 'closed') return false;
+    if (search && !pr.title.toLowerCase().includes(search) && !pr.plain.toLowerCase().includes(search) && !pr.repo.toLowerCase().includes(search) && !String(pr.number).includes(search)) {
+      return false;
+    }
     return true;
   });
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty-state">No submissions found in this category.</div>`;
+    container.innerHTML = `<div class="empty-state">No submissions found matching the selected filter or search term.</div>`;
     return;
   }
 
@@ -583,7 +597,18 @@ function renderPRs() {
   }).join('');
 }
 
-async function loadPRs() {
+function updateTabCounts() {
+  const accepted = allPRs.filter(p => p.status === 'accepted').length;
+  const open = allPRs.filter(p => p.status === 'open').length;
+  const closed = allPRs.filter(p => p.status === 'closed').length;
+
+  if (document.getElementById('tab-count-all')) document.getElementById('tab-count-all').textContent = allPRs.length;
+  if (document.getElementById('tab-count-accepted')) document.getElementById('tab-count-accepted').textContent = accepted;
+  if (document.getElementById('tab-count-open')) document.getElementById('tab-count-open').textContent = open;
+  if (document.getElementById('tab-count-closed')) document.getElementById('tab-count-closed').textContent = closed;
+}
+
+function loadPRs() {
   const url = 'https://api.github.com/search/issues?q=author:bradwue313+type:pr&sort=updated&order=desc&per_page=100';
   const res = await fetch(url);
   if (!res.ok) throw new Error('GitHub API rate limit or error');
@@ -614,7 +639,8 @@ async function loadPRs() {
   document.getElementById('count-open').textContent = openCount;
   document.getElementById('count-total').textContent = allPRs.length;
 
-  renderPRs();
+  updateTabCounts();
+      renderPRs();
 }
 
 async function loadWallets() {
@@ -674,7 +700,7 @@ async function loadAll() {
     const now = new Date();
     document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString()}`;
   } catch (err) {
-    document.getElementById('last-updated').textContent = 'Sync error — click Refresh';
+    document.getElementById('last-updated').textContent = 'Sync error â€” click Refresh';
   } finally {
     btn.disabled = false;
     btn.textContent = 'Refresh Now';
