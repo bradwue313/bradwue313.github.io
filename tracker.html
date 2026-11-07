@@ -517,6 +517,9 @@ function plainEnglishSummary(title, repo) {
   if (t.includes('divassign') || t.includes('modassign') || t.includes('hyb-e6001')) {
     return 'Fixed divide-by-zero crash check for decimal numbers';
   }
+  if (t.includes('package qualifier') || t.includes('shadowed package')) {
+    return 'Fixed package name shadowing check in type definitions';
+  }
   if (t.includes('is_conversion_type_name')) {
     return 'Removed invalid Rust type names from Go constant checker';
   }
