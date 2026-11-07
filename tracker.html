@@ -1,529 +1,688 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Live Bounty Tracker â€” bradwue313</title>
-  <style>
-    :root {
-      --bg: #0b0f17;
-      --card: #151c28;
-      --card-hover: #1c2536;
-      --border: #263248;
-      --text: #f0f4f8;
-      --muted: #8b9bb4;
-      --green: #10b981;
-      --green-bg: rgba(16, 185, 129, 0.14);
-      --yellow: #f59e0b;
-      --yellow-bg: rgba(245, 158, 11, 0.14);
-      --red: #ef4444;
-      --red-bg: rgba(239, 68, 68, 0.14);
-      --blue: #3b82f6;
-      --blue-bg: rgba(59, 130, 246, 0.14);
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      padding: 16px;
-      max-width: 860px;
-      margin: 0 auto;
-    }
-    header {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    h1 {
-      font-size: 1.45rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .live-dot {
-      width: 10px;
-      height: 10px;
-      background-color: var(--green);
-      border-radius: 50%;
-      display: inline-block;
-      box-shadow: 0 0 8px var(--green);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    .refresh-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
-    button.btn-refresh {
-      background: var(--blue);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 8px 14px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    button.btn-refresh:hover {
-      opacity: 0.9;
-    }
-    button.btn-refresh:disabled {
-      opacity: 0.5;
-      cursor: wait;
-    }
-    .scoreboard {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    @media (min-width: 640px) {
-      .scoreboard {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
-    .score-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .score-label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .score-value {
-      font-size: 1.9rem;
-      font-weight: 800;
-    }
-    .score-sub {
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-    .c-green { color: var(--green); }
-    .c-yellow { color: var(--yellow); }
-    .c-blue { color: var(--blue); }
-    .c-red { color: var(--red); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aurelis — Live Bounty Tracker & Submissions</title>
+<meta name="description" content="Live auto-updating tracker of bug fixes, compiler soundness pull requests, and on-chain bounty settlements by Aurelis (@bradwue313).">
+<meta name="theme-color" content="#f4f0e8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231b1a17'/%3E%3Cpath d='M16 6 L26 26 H21.5 L16 14.5 L10.5 26 H6 Z' fill='%23f4f0e8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f4f0e8;
+  --paper2: #ebe5d8;
+  --ink: #1b1a17;
+  --body: #3a3832;
+  --muted: #5f5a50;
+  --rule: #d4ccbb;
+  --accent: #a63d1a;
+  --focus: #1a55c4;
+  --green: #15803d;
+  --green-bg: #dcfce7;
+  --yellow: #b45309;
+  --yellow-bg: #fef3c7;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #16150f;
+    --paper2: #201e17;
+    --ink: #f1ece0;
+    --body: #cfc9ba;
+    --muted: #a39d8d;
+    --rule: #34312a;
+    --accent: #e3764f;
+    --focus: #7fb0ff;
+    --green: #4ade80;
+    --green-bg: #064e3b;
+    --yellow: #fbbf24;
+    --yellow-bg: #451a03;
+  }
+  meta[name=theme-color] { content: #16150f; }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font: 17px/1.65 "IBM Plex Sans", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-underline-offset: 4px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
+.skip { position: absolute; left: 12px; top: -60px; background: var(--ink); color: var(--paper); padding: 10px 16px; z-index: 100; border-radius: 2px; }
+.skip:focus { top: 12px; }
+.wrap { max-width: 880px; margin: 0 auto; padding: 0 28px; }
 
-    .wallet-banner {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: 0.85rem;
-    }
-    .wallet-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .wallet-addr {
-      font-family: monospace;
-      color: var(--muted);
-      font-size: 0.8rem;
-      word-break: break-all;
-    }
+header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+header .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 64px;
+}
+.mark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Newsreader", serif;
+  font-size: 22px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.mark svg { width: 22px; height: 22px; }
+nav { display: flex; gap: 4px; }
+nav a {
+  font-size: 14px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 12px 12px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color .2s var(--ease), border-color .2s var(--ease);
+}
+nav a:hover { color: var(--ink); }
+nav a.on { color: var(--ink); border-bottom-color: var(--accent); }
 
-    .tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-    .tab-btn {
-      background: var(--card);
-      color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 7px 14px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .tab-btn.active {
-      background: var(--text);
-      color: var(--bg);
-      border-color: var(--text);
-    }
+.hero { padding: 64px 0 40px; }
+.eyebrow {
+  font: 500 13px/1 "IBM Plex Mono", monospace;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.live-pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 0 rgba(21, 128, 61, 0.7);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(21, 128, 61, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(21, 128, 61, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(21, 128, 61, 0); }
+}
 
-    .pr-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .pr-card {
-      display: block;
-      text-decoration: none;
-      color: inherit;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      transition: background 0.15s, border-color 0.15s;
-    }
-    .pr-card:hover {
-      background: var(--card-hover);
-      border-color: #3b4d6b;
-    }
-    .pr-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-    .badge {
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 999px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .badge-accepted {
-      background: var(--green-bg);
-      color: var(--green);
-    }
-    .badge-queue {
-      background: var(--yellow-bg);
-      color: var(--yellow);
-    }
-    .badge-closed {
-      background: var(--red-bg);
-      color: var(--red);
-    }
-    .pr-meta {
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-    .pr-plain {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: var(--text);
-    }
-    .pr-tech {
-      font-size: 0.8rem;
-      color: var(--muted);
-      word-break: break-word;
-    }
-    .empty-state {
-      text-align: center;
-      padding: 36px 16px;
-      color: var(--muted);
-      background: var(--card);
-      border-radius: 12px;
-      border: 1px dashed var(--border);
-    }
-  </style>
+h1 {
+  font-family: "Newsreader", serif;
+  font-weight: 400;
+  font-size: clamp(34px, 5.2vw, 54px);
+  line-height: 1.1;
+  letter-spacing: -.018em;
+  max-width: 16em;
+  margin-bottom: 16px;
+}
+h1 em { color: var(--accent); font-style: italic; }
+.lede { max-width: 38em; color: var(--body); font-size: 18px; line-height: 1.6; }
+
+.sync-bar {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  font: 400 13.5px "IBM Plex Mono", monospace;
+  color: var(--muted);
+  padding: 12px 18px;
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+.btn-refresh {
+  font: 500 13px "IBM Plex Sans", sans-serif;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background .2s var(--ease);
+}
+.btn-refresh:hover { background: var(--accent); }
+.btn-refresh:disabled { opacity: 0.6; cursor: wait; }
+
+/* Settlement Banner */
+.claim-card {
+  margin: 32px 0 28px;
+  background: var(--paper2);
+  border: 1px solid var(--accent);
+  border-left: 4px solid var(--accent);
+  padding: 20px 22px;
+  border-radius: 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.claim-card h3 {
+  font-family: "Newsreader", serif;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.claim-card p {
+  font-size: 14.5px;
+  color: var(--body);
+}
+.claim-btn {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent);
+  color: #fff;
+  padding: 8px 18px;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 2px;
+  white-space: nowrap;
+  transition: opacity .2s var(--ease);
+}
+.claim-btn:hover { opacity: 0.9; }
+
+/* Scoreboard */
+.scoreboard {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 32px;
+}
+.score-box {
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  padding: 18px 16px;
+  border-radius: 2px;
+}
+.score-label {
+  font: 500 11.5px/1 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 8px;
+}
+.score-val {
+  font-family: "Newsreader", serif;
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1;
+  display: block;
+  margin-bottom: 6px;
+}
+.score-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  display: block;
+}
+.c-green { color: var(--green); }
+.c-yellow { color: var(--yellow); }
+.c-ink { color: var(--ink); }
+
+/* Wallets */
+.wallets-box {
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  padding: 20px 22px;
+  border-radius: 2px;
+  margin-bottom: 36px;
+}
+.wallets-box h3 {
+  font-family: "Newsreader", serif;
+  font-size: 19px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+.wallet-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 14.5px;
+}
+.wallet-row:last-child { border-bottom: none; padding-bottom: 0; }
+.wallet-label { font-weight: 600; color: var(--ink); }
+.wallet-code {
+  font: 400 12.5px "IBM Plex Mono", monospace;
+  background: var(--paper);
+  padding: 4px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  word-break: break-all;
+}
+.wallet-bal {
+  font: 500 13.5px "IBM Plex Mono", monospace;
+  color: var(--green);
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 12px;
+}
+.tab-btn {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  padding: 6px 14px;
+  font: 500 13.5px "IBM Plex Sans", sans-serif;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all .2s var(--ease);
+}
+.tab-btn:hover { color: var(--ink); border-color: var(--ink); }
+.tab-btn.active {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* PR List */
+.pr-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.pr-item {
+  display: block;
+  text-decoration: none;
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  padding: 18px 20px;
+  border-radius: 2px;
+  transition: transform .2s var(--ease), border-color .2s var(--ease);
+}
+.pr-item:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+.pr-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.badge {
+  font: 600 11px/1 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 4px 8px;
+  border-radius: 2px;
+}
+.badge-accepted { background: var(--green-bg); color: var(--green); }
+.badge-queue { background: var(--yellow-bg); color: var(--yellow); }
+.badge-closed { background: var(--rule); color: var(--muted); }
+.pr-repo {
+  font: 400 12.5px "IBM Plex Mono", monospace;
+  color: var(--muted);
+}
+.pr-plain {
+  font-family: "Newsreader", serif;
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.pr-tech {
+  font: 400 12.5px "IBM Plex Mono", monospace;
+  color: var(--muted);
+  word-break: break-word;
+}
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  background: var(--paper2);
+  border: 1px dashed var(--rule);
+  color: var(--muted);
+  font-size: 15.5px;
+}
+
+footer {
+  padding: 56px 0 72px;
+  border-top: 1px solid var(--rule);
+  font-size: 14.5px;
+  color: var(--muted);
+  margin-top: 64px;
+}
+footer .wrap {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 760px) {
+  .scoreboard { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .claim-card { flex-direction: column; align-items: flex-start; }
+  nav a { padding: 12px 8px; }
+  .mark span { display: none; }
+}
+</style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-  <header>
-    <div class="header-top">
-      <h1><span class="live-dot"></span> My Bounty Tracker</h1>
-      <div class="refresh-bar">
-        <span id="last-updated">Updating...</span>
+<header><div class="wrap">
+  <a class="mark" href="index.html" aria-label="Aurelis home">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4 L28 28 H22.5 L16 14.5 L9.5 28 H4 Z" fill="currentColor"/></svg>
+    <span>Aurelis</span>
+  </a>
+  <nav aria-label="Primary">
+    <a href="index.html">Home</a>
+    <a href="index.html#work">Work</a>
+    <a href="index.html#pricing">Pricing</a>
+    <a href="index.html#pay">Crypto</a>
+    <a href="/tracker.html" class="on">Live Tracker</a>
+  </nav>
+</div></header>
+
+<main id="main">
+<div class="wrap">
+  <div class="hero">
+    <p class="eyebrow"><span class="live-pulse"></span> Live Bounty Tracker &middot; Autonomous Submissions</p>
+    <h1>Transparent bug fixes. <em>Live from GitHub &amp; on-chain</em>.</h1>
+    <p class="lede">Real-time public record of every compiler soundness fix and security pull request submitted by Aurelis (<code>@bradwue313</code>). Updates automatically from GitHub and RPCs every 60 seconds.</p>
+
+    <div class="sync-bar">
+      <span>Auto-syncing with GitHub API &amp; Base/Solana RPCs</span>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span id="last-updated">Checking updates...</span>
         <button class="btn-refresh" id="refresh-btn" onclick="loadAll()">Refresh Now</button>
       </div>
     </div>
-    <p style="font-size: 0.9rem; color: var(--muted);">
-      Simple live view of every bug fix we submitted. Updates automatically from GitHub every 60 seconds.
-    </p>
-  </header>
+  </div>
 
-    <section style="background:#0f241a;border:1px solid #10b981;border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+  <div class="claim-card">
     <div>
-      <div style="font-size:0.75rem;font-weight:700;color:#34d399;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px;">Official Payout Claim Registered</div>
-      <div style="font-size:0.95rem;color:#f0f6fc;font-weight:600;">Discussion #295 &bull; 3 Merged Commit SHAs Recorded &bull; 22 PRs in Queue</div>
+      <span style="font:600 11.5px 'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);">Official Settlement Claim</span>
+      <h3>Registered in limitlessprojects/Go-Hybrid Discussion #295</h3>
+      <p>3 Merged Commit SHAs Recorded (<code>30e75134</code>, <code>d96b7a98</code>, <code>c3c7b12f</code>) &middot; Payout coordinates verified on Base USDC.</p>
     </div>
-    <a href="https://github.com/limitlessprojects/Go-Hybrid/discussions/295#discussioncomment-19455873" target="_blank" rel="noopener" style="background:#10b981;color:#0b0f17;padding:8px 14px;border-radius:6px;font-weight:700;font-size:0.82rem;text-decoration:none;">View On GitHub &rarr;</a>
-  </section>
+    <a class="claim-btn" href="https://github.com/limitlessprojects/Go-Hybrid/discussions/295#discussioncomment-19455873" target="_blank" rel="noopener">View Board Record &rarr;</a>
+  </div>
 
   <section class="scoreboard">
     <div class="score-box">
       <span class="score-label">Accepted Fixes</span>
-      <span class="score-value c-green" id="count-accepted">-</span>
-      <span class="score-sub">Officially merged</span>
+      <span class="score-val c-green" id="count-accepted">-</span>
+      <span class="score-sub">Officially merged to main</span>
     </div>
     <div class="score-box">
       <span class="score-label">Waiting in Queue</span>
-      <span class="score-value c-yellow" id="count-open">-</span>
-      <span class="score-sub">Pending review run</span>
+      <span class="score-val c-yellow" id="count-open">-</span>
+      <span class="score-sub">Pending maintainer drain</span>
     </div>
     <div class="score-box">
       <span class="score-label">Total Submitted</span>
-      <span class="score-value c-blue" id="count-total">-</span>
+      <span class="score-val c-ink" id="count-total">-</span>
       <span class="score-sub">Pull requests sent</span>
     </div>
     <div class="score-box">
       <span class="score-label">Wallet Balance</span>
-      <span class="score-value c-green" id="wallet-total">$0.00</span>
-      <span class="score-sub" id="wallet-sub">Checking wallets...</span>
+      <span class="score-val c-green" id="wallet-total">$0.00</span>
+      <span class="score-sub" id="wallet-sub">Checking on-chain...</span>
     </div>
   </section>
 
-  <section class="wallet-banner">
+  <div class="wallets-box">
+    <h3>Designated Settlement Wallets</h3>
     <div class="wallet-row">
-      <strong>Base USDC Wallet:</strong>
-      <span class="wallet-addr">0x38e0f40371be8b30f0909f890a1f701a25cd30cd</span>
-      <span id="base-bal" style="font-weight:600; color:var(--green);">Checking...</span>
+      <span class="wallet-label">Base USDC (ERC-20):</span>
+      <span class="wallet-code">0x38e0f40371be8b30f0909f890a1f701a25cd30cd</span>
+      <span class="wallet-bal" id="base-bal">Checking...</span>
     </div>
     <div class="wallet-row">
-      <strong>Solana Wallet:</strong>
-      <span class="wallet-addr">CRdpAku2qovsPN2wGej5AbgMNtuhRQtq3GKFDFfMkJsv</span>
-      <span id="sol-bal" style="font-weight:600; color:var(--green);">Checking...</span>
+      <span class="wallet-label">Solana (SOL / USDC):</span>
+      <span class="wallet-code">CRdpAku2qovsPN2wGej5AbgMNtuhRQtq3GKFDFfMkJsv</span>
+      <span class="wallet-bal" id="sol-bal">Checking...</span>
     </div>
-  </section>
+  </div>
 
   <div class="tabs">
     <button class="tab-btn active" onclick="setFilter('all', this)">All Submissions</button>
     <button class="tab-btn" onclick="setFilter('accepted', this)">Accepted (Merged)</button>
     <button class="tab-btn" onclick="setFilter('open', this)">Waiting in Queue</button>
-    <button class="tab-btn" onclick="setFilter('closed', this)">Not Merged / Replaced</button>
+    <button class="tab-btn" onclick="setFilter('closed', this)">Closed / Superseded</button>
   </div>
 
-  <main class="pr-list" id="pr-list">
+  <div class="pr-list" id="pr-list">
     <div class="empty-state">Loading live submissions from GitHub...</div>
-  </main>
+  </div>
+</div>
+</main>
 
-  <script>
-    let allPRs = [];
-    let currentFilter = 'all';
+<footer><div class="wrap">
+  <span>&copy; Aurelis &middot; Independent Systems &amp; Security Engineer</span>
+  <span><a href="mailto:aurelis.work@gmail.com">aurelis.work@gmail.com</a> &middot; <a href="https://github.com/bradwue313">github.com/bradwue313</a></span>
+</div></footer>
 
-    function plainEnglishSummary(title, repo) {
-      const t = title.toLowerCase();
-      if (t.includes('foreign method surface')) {
-        const afterFor = title.split(/for /i)[1] || 'Go standard library types';
-        const cleanTypes = afterFor.replace(/\(HYB.*$/i, '').trim();
-        return `Added missing Go library safety checks for ${cleanTypes}`;
-      }
-      if (t.includes('check_try_operand') || t.includes('hyb-e2011')) {
-        return 'Fixed error-handling (?) operator bypass on functions & methods';
-      }
-      if (t.includes('elided struct literals')) {
-        return 'Fixed validation bug allowing invalid shorthand struct values';
-      }
-      if (t.includes('bind_if_init_for_recv')) {
-        return 'Fixed channel receive safety check inside if-statements';
-      }
-      if (t.includes('divassign') || t.includes('modassign') || t.includes('hyb-e6001')) {
-        return 'Fixed divide-by-zero crash check for decimal numbers';
-      }
-      if (t.includes('is_conversion_type_name')) {
-        return 'Removed invalid Rust type names from Go constant checker';
-      }
-      if (t.includes('run_type_arg_expr') || t.includes('hyb-e1001')) {
-        return 'Fixed undeclared type name check inside make() and new() calls';
-      }
-      if (t.includes('builtin') || t.includes('closure') || t.includes('hyb-e2005')) {
-        return 'Fixed variable scope leak inside nested closure blocks';
-      }
-      if (t.includes('static_result_count') || t.includes('foreign_receiver_result_count') || t.includes('hyb-e2002')) {
-        return 'Fixed multi-value return count check on library methods';
-      }
-      if (t.includes('const_overflow') || t.includes('hyb-e6002') || t.includes('hyb-e6006')) {
-        return 'Fixed number overflow check in constant expressions and conversions';
-      }
-      if (t.includes('hyb-e3008') || t.includes('hyb-e3009')) {
-        return 'Fixed memory ownership & pointer escape check in compiler';
-      }
-      return `Submitted bug fix to ${repo}`;
+<script>
+let allPRs = [];
+let currentFilter = 'all';
+
+function plainEnglishSummary(title, repo) {
+  const t = title.toLowerCase();
+  if (t.includes('foreign method surface')) {
+    const afterFor = title.split(/for /i)[1] || 'Go standard library types';
+    const cleanTypes = afterFor.replace(/\(HYB.*$/i, '').trim();
+    return `Added missing standard library safety checks for ${cleanTypes}`;
+  }
+  if (t.includes('check_try_operand') || t.includes('hyb-e2011')) {
+    return 'Fixed error-handling (?) operator bypass on functions & methods';
+  }
+  if (t.includes('elided struct literals') || t.includes('elided_literal')) {
+    return 'Fixed validation bug allowing invalid shorthand struct values';
+  }
+  if (t.includes('bind_if_init_for_recv') || t.includes('hyb-e2008')) {
+    return 'Fixed channel receive safety check inside if-statements';
+  }
+  if (t.includes('divassign') || t.includes('modassign') || t.includes('hyb-e6001')) {
+    return 'Fixed divide-by-zero crash check for decimal numbers';
+  }
+  if (t.includes('is_conversion_type_name')) {
+    return 'Removed invalid Rust type names from Go constant checker';
+  }
+  if (t.includes('run_type_arg_expr') || t.includes('hyb-e1001')) {
+    return 'Fixed undeclared type name check inside make() and new() calls';
+  }
+  if (t.includes('builtin') || t.includes('closure') || t.includes('hyb-e2005')) {
+    return 'Fixed variable scope leak inside nested closure blocks';
+  }
+  if (t.includes('static_result_count') || t.includes('foreign_receiver_result_count') || t.includes('hyb-e2002')) {
+    return 'Fixed multi-value return count check on library methods';
+  }
+  if (t.includes('const_overflow') || t.includes('hyb-e6002') || t.includes('hyb-e6006')) {
+    return 'Fixed number overflow check in constant expressions and conversions';
+  }
+  if (t.includes('hyb-e3008') || t.includes('hyb-e3009')) {
+    return 'Fixed memory ownership & pointer escape check in compiler';
+  }
+  return `Bug fix submitted to ${repo}`;
+}
+
+function timeAgo(dateStr) {
+  const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderPRs();
+}
+
+function renderPRs() {
+  const container = document.getElementById('pr-list');
+  const filtered = allPRs.filter(pr => {
+    if (currentFilter === 'accepted') return pr.status === 'accepted';
+    if (currentFilter === 'open') return pr.status === 'open';
+    if (currentFilter === 'closed') return pr.status === 'closed';
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-state">No submissions found in this category.</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(pr => {
+    let badgeClass = 'badge-queue';
+    let badgeText = 'WAITING IN QUEUE';
+    if (pr.status === 'accepted') {
+      badgeClass = 'badge-accepted';
+      badgeText = 'ACCEPTED &amp; MERGED';
+    } else if (pr.status === 'closed') {
+      badgeClass = 'badge-closed';
+      badgeText = 'CLOSED / SUPERSEDED';
     }
 
-    function timeAgo(dateStr) {
-      const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-      if (diff < 60) return `${diff}s ago`;
-      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-      return `${Math.floor(diff / 86400)}d ago`;
-    }
+    return `
+      <a class="pr-item" href="${pr.url}" target="_blank" rel="noopener">
+        <div class="pr-top">
+          <span class="badge ${badgeClass}">${badgeText}</span>
+          <span class="pr-repo">${pr.repo} <strong>#${pr.number}</strong> &middot; ${timeAgo(pr.updated_at)}</span>
+        </div>
+        <div class="pr-plain">${pr.plain}</div>
+        <div class="pr-tech">${pr.title}</div>
+      </a>
+    `;
+  }).join('');
+}
 
-    function setFilter(filter, btn) {
-      currentFilter = filter;
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderPRs();
-    }
+async function loadPRs() {
+  const url = 'https://api.github.com/search/issues?q=author:bradwue313+type:pr&sort=updated&order=desc&per_page=100';
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('GitHub API rate limit or error');
+  const data = await res.json();
 
-    function renderPRs() {
-      const container = document.getElementById('pr-list');
-      const filtered = allPRs.filter(pr => {
-        if (currentFilter === 'accepted') return pr.status === 'accepted';
-        if (currentFilter === 'open') return pr.status === 'open';
-        if (currentFilter === 'closed') return pr.status === 'closed';
-        return true;
-      });
+  allPRs = (data.items || []).map(item => {
+    const repo = item.repository_url.split('/').slice(-2).join('/');
+    const isMerged = item.pull_request && item.pull_request.merged_at != null;
+    let status = 'open';
+    if (isMerged) status = 'accepted';
+    else if (item.state === 'closed') status = 'closed';
 
-      if (filtered.length === 0) {
-        container.innerHTML = `<div class="empty-state">No submissions in this category right now.</div>`;
-        return;
-      }
+    return {
+      number: item.number,
+      title: item.title,
+      plain: plainEnglishSummary(item.title, repo),
+      repo,
+      url: item.html_url,
+      status,
+      updated_at: item.updated_at
+    };
+  });
 
-      container.innerHTML = filtered.map(pr => {
-        let badgeClass = 'badge-queue';
-        let badgeText = 'WAITING IN QUEUE';
-        if (pr.status === 'accepted') {
-          badgeClass = 'badge-accepted';
-          badgeText = 'ACCEPTED & MERGED';
-        } else if (pr.status === 'closed') {
-          badgeClass = 'badge-closed';
-          badgeText = 'CLOSED / SUPERSEDED';
-        }
+  const acceptedCount = allPRs.filter(p => p.status === 'accepted').length;
+  const openCount = allPRs.filter(p => p.status === 'open').length;
 
-        return `
-          <a class="pr-card" href="${pr.url}" target="_blank" rel="noopener">
-            <div class="pr-top">
-              <span class="badge ${badgeClass}">${badgeText}</span>
-              <span class="pr-meta">${pr.repo} <strong>#${pr.number}</strong> â€¢ Updated ${timeAgo(pr.updated_at)}</span>
-            </div>
-            <div class="pr-plain">${pr.plain}</div>
-            <div class="pr-tech">Technical title: ${pr.title}</div>
-          </a>
-        `;
-      }).join('');
-    }
+  document.getElementById('count-accepted').textContent = acceptedCount;
+  document.getElementById('count-open').textContent = openCount;
+  document.getElementById('count-total').textContent = allPRs.length;
 
-    async function loadPRs() {
-      const url = 'https://api.github.com/search/issues?q=author:bradwue313+type:pr&sort=updated&order=desc&per_page=100';
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('GitHub API rate limit or network error');
-      const data = await res.json();
+  renderPRs();
+}
 
-      allPRs = (data.items || []).map(item => {
-        const repo = item.repository_url.split('/').slice(-2).join('/');
-        const isMerged = item.pull_request && item.pull_request.merged_at != null;
-        let status = 'open';
-        if (isMerged) status = 'accepted';
-        else if (item.state === 'closed') status = 'closed';
+async function loadWallets() {
+  let totalUsd = 0;
+  try {
+    const baseRes = await fetch('https://mainnet.base.org', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'eth_call',
+        params: [{
+          to: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+          data: '0x70a0823100000000000000000000000038e0f40371be8b30f0909f890a1f701a25cd30cd'
+        }, 'latest']
+      })
+    });
+    const baseData = await baseRes.json();
+    const usdcRaw = parseInt(baseData.result || '0x0', 16);
+    const usdcVal = (usdcRaw / 1e6);
+    totalUsd += usdcVal;
+    document.getElementById('base-bal').textContent = `$${usdcVal.toFixed(2)} USDC`;
+  } catch (e) {
+    document.getElementById('base-bal').textContent = '$0.00 USDC';
+  }
 
-        return {
-          number: item.number,
-          title: item.title,
-          plain: plainEnglishSummary(item.title, repo),
-          repo,
-          url: item.html_url,
-          status,
-          updated_at: item.updated_at
-        };
-      });
+  try {
+    const solRes = await fetch('https://api.mainnet-beta.solana.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'getBalance',
+        params: ['CRdpAku2qovsPN2wGej5AbgMNtuhRQtq3GKFDFfMkJsv']
+      })
+    });
+    const solData = await solRes.json();
+    const lamports = (solData.result && solData.result.value) || 0;
+    const solVal = lamports / 1e9;
+    document.getElementById('sol-bal').textContent = `${solVal.toFixed(4)} SOL`;
+  } catch (e) {
+    document.getElementById('sol-bal').textContent = '0.0000 SOL';
+  }
 
-      const acceptedCount = allPRs.filter(p => p.status === 'accepted').length;
-      const openCount = allPRs.filter(p => p.status === 'open').length;
+  document.getElementById('wallet-total').textContent = `$${totalUsd.toFixed(2)}`;
+  document.getElementById('wallet-sub').textContent = 'Live on-chain check';
+}
 
-      document.getElementById('count-accepted').textContent = acceptedCount;
-      document.getElementById('count-open').textContent = openCount;
-      document.getElementById('count-total').textContent = allPRs.length;
+async function loadAll() {
+  const btn = document.getElementById('refresh-btn');
+  btn.disabled = true;
+  btn.textContent = 'Syncing...';
+  try {
+    await Promise.all([loadPRs(), loadWallets()]);
+    const now = new Date();
+    document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString()}`;
+  } catch (err) {
+    document.getElementById('last-updated').textContent = 'Sync error — click Refresh';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Refresh Now';
+  }
+}
 
-      renderPRs();
-    }
-
-    async function loadWallets() {
-      let totalUsd = 0;
-      try {
-        // Check Base USDC (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)
-        const baseRes = await fetch('https://mainnet.base.org', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: 1,
-            method: 'eth_call',
-            params: [{
-              to: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
-              data: '0x70a0823100000000000000000000000038e0f40371be8b30f0909f890a1f701a25cd30cd'
-            }, 'latest']
-          })
-        });
-        const baseData = await baseRes.json();
-        const usdcRaw = parseInt(baseData.result || '0x0', 16);
-        const usdcVal = (usdcRaw / 1e6);
-        totalUsd += usdcVal;
-        document.getElementById('base-bal').textContent = `$${usdcVal.toFixed(2)} USDC`;
-      } catch (e) {
-        document.getElementById('base-bal').textContent = '$0.00 USDC';
-      }
-
-      try {
-        // Check Solana SOL balance
-        const solRes = await fetch('https://api.mainnet-beta.solana.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: 1,
-            method: 'getBalance',
-            params: ['CRdpAku2qovsPN2wGej5AbgMNtuhRQtq3GKFDFfMkJsv']
-          })
-        });
-        const solData = await solRes.json();
-        const lamports = (solData.result && solData.result.value) || 0;
-        const solVal = lamports / 1e9;
-        document.getElementById('sol-bal').textContent = `${solVal.toFixed(4)} SOL`;
-      } catch (e) {
-        document.getElementById('sol-bal').textContent = '0.0000 SOL';
-      }
-
-      document.getElementById('wallet-total').textContent = `$${totalUsd.toFixed(2)}`;
-      document.getElementById('wallet-sub').textContent = 'Live on-chain check';
-    }
-
-    async function loadAll() {
-      const btn = document.getElementById('refresh-btn');
-      btn.disabled = true;
-      btn.textContent = 'Refreshing...';
-      try {
-        await Promise.all([loadPRs(), loadWallets()]);
-        const now = new Date();
-        document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString()}`;
-      } catch (err) {
-        document.getElementById('last-updated').textContent = 'Update error â€” tap Refresh';
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'Refresh Now';
-      }
-    }
-
-    loadAll();
-    setInterval(loadAll, 60000);
-  </script>
+loadAll();
+setInterval(loadAll, 60000);
+</script>
 </body>
 </html>
