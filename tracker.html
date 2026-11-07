@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Bounty Tracker — bradwue313</title>
+  <style>
+    :root {
+      --bg: #0b0f17;
+      --card: #151c28;
+      --card-hover: #1c2536;
+      --border: #263248;
+      --text: #f0f4f8;
+      --muted: #8b9bb4;
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.14);
+      --yellow: #f59e0b;
+      --yellow-bg: rgba(245, 158, 11, 0.14);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.14);
+      --blue: #3b82f6;
+      --blue-bg: rgba(59, 130, 246, 0.14);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 16px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      background-color: var(--green);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .refresh-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    button.btn-refresh {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    button.btn-refresh:hover {
+      opacity: 0.9;
+    }
+    button.btn-refresh:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+    .scoreboard {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (min-width: 640px) {
+      .scoreboard {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    .score-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .score-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .score-value {
+      font-size: 1.9rem;
+      font-weight: 800;
+    }
+    .score-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .c-green { color: var(--green); }
+    .c-yellow { color: var(--yellow); }
+    .c-blue { color: var(--blue); }
+    .c-red { color: var(--red); }
+
+    .wallet-banner {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+    .wallet-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .wallet-addr {
+      font-family: monospace;
+      color: var(--muted);
+      font-size: 0.8rem;
+      word-break: break-all;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .tab-btn {
+      background: var(--card);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+
+    .pr-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .pr-card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .pr-card:hover {
+      background: var(--card-hover);
+      border-color: #3b4d6b;
+    }
+    .pr-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-accepted {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+    .badge-queue {
+      background: var(--yellow-bg);
+      color: var(--yellow);
+    }
+    .badge-closed {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+    .pr-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .pr-plain {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .pr-tech {
+      font-size: 0.8rem;
+      color: var(--muted);
+      word-break: break-word;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 36px 16px;
+      color: var(--muted);
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px dashed var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-top">
+      <h1><span class="live-dot"></span> My Bounty Tracker</h1>
+      <div class="refresh-bar">
+        <span id="last-updated">Updating...</span>
+        <button class="btn-refresh" id="refresh-btn" onclick="loadAll()">Refresh Now</button>
+      </div>
+    </div>
+    <p style="font-size: 0.9rem; color: var(--muted);">
+      Simple live view of every bug fix we submitted. Updates automatically from GitHub every 60 seconds.
+    </p>
+  </header>
+
+  <section class="scoreboard">
+    <div class="score-box">
+      <span class="score-label">Accepted Fixes</span>
+      <span class="score-value c-green" id="count-accepted">-</span>
+      <span class="score-sub">Officially merged</span>
+    </div>
+    <div class="score-box">
+      <span class="score-label">Waiting in Queue</span>
+      <span class="score-value c-yellow" id="count-open">-</span>
+      <span class="score-sub">Pending review run</span>
+    </div>
+    <div class="score-box">
+      <span class="score-label">Total Submitted</span>
+      <span class="score-value c-blue" id="count-total">-</span>
+      <span class="score-sub">Pull requests sent</span>
+    </div>
+    <div class="score-box">
+      <span class="score-label">Wallet Balance</span>
+      <span class="score-value c-green" id="wallet-total">$0.00</span>
+      <span class="score-sub" id="wallet-sub">Checking wallets...</span>
+    </div>
+  </section>
+
+  <section class="wallet-banner">
+    <div class="wallet-row">
+      <strong>Base USDC Wallet:</strong>
+      <span class="wallet-addr">0x38e0f40371be8b30f0909f890a1f701a25cd30cd</span>
+      <span id="base-bal" style="font-weight:600; color:var(--green);">Checking...</span>
+    </div>
+    <div class="wallet-row">
+      <strong>Solana Wallet:</strong>
+      <span class="wallet-addr">CRdpAku2qovsPN2wGej5AbgMNtuhRQtq3GKFDFfMkJsv</span>
+      <span id="sol-bal" style="font-weight:600; color:var(--green);">Checking...</span>
+    </div>
+  </section>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="setFilter('all', this)">All Submissions</button>
+    <button class="tab-btn" onclick="setFilter('accepted', this)">Accepted (Merged)</button>
+    <button class="tab-btn" onclick="setFilter('open', this)">Waiting in Queue</button>
+    <button class="tab-btn" onclick="setFilter('closed', this)">Not Merged / Replaced</button>
+  </div>
+
+  <main class="pr-list" id="pr-list">
+    <div class="empty-state">Loading live submissions from GitHub...</div>
+  </main>
+
+  <script>
+    let allPRs = [];
+    let currentFilter = 'all';
+
+    function plainEnglishSummary(title, repo) {
+      const t = title.toLowerCase();
+      if (t.includes('foreign method surface')) {
+        const afterFor = title.split(/for /i)[1] || 'Go standard library types';
+        const cleanTypes = afterFor.replace(/\(HYB.*$/i, '').trim();
+        return `Added missing Go library safety checks for ${cleanTypes}`;
+      }
+      if (t.includes('check_try_operand') || t.includes('hyb-e2011')) {
+        return 'Fixed error-handling (?) operator bypass on functions & methods';
+      }
+      if (t.includes('elided struct literals')) {
+        return 'Fixed validation bug allowing invalid shorthand struct values';
+      }
+      if (t.includes('bind_if_init_for_recv')) {
+        return 'Fixed channel receive safety check inside if-statements';
+      }
+      if (t.includes('divassign') || t.includes('modassign') || t.includes('hyb-e6001')) {
+        return 'Fixed divide-by-zero crash check for decimal numbers';
+      }
+      if (t.includes('is_conversion_type_name')) {
+        return 'Removed invalid Rust type names from Go constant checker';
+      }
+      if (t.includes('run_type_arg_expr') || t.includes('hyb-e1001')) {
+        return 'Fixed undeclared type name check inside make() and new() calls';
+      }
+      if (t.includes('builtin') || t.includes('closure')) {
+        return 'Fixed variable scope leak inside nested closure blocks';
+      }
+      if (t.includes('static_result_count') || t.includes('hyb-e2002')) {
+        return 'Fixed multi-value return count check on library methods';
+      }
+      if (t.includes('const_overflow') || t.includes('hyb-e6002') || t.includes('hyb-e6006')) {
+        return 'Fixed number overflow check in constant expressions and conversions';
+      }
+      if (t.includes('hyb-e3008') || t.includes('hyb-e3009')) {
+        return 'Fixed memory ownership & pointer escape check in compiler';
+      }
+      return `Submitted bug fix to ${repo}`;
+    }
+
+    function timeAgo(dateStr) {
+      const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+      if (diff < 60) return `${diff}s ago`;
+      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      return `${Math.floor(diff / 86400)}d ago`;
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderPRs();
+    }
+
+    function renderPRs() {
+      const container = document.getElementById('pr-list');
+      const filtered = allPRs.filter(pr => {
+        if (currentFilter === 'accepted') return pr.status === 'accepted';
+        if (currentFilter === 'open') return pr.status === 'open';
+        if (currentFilter === 'closed') return pr.status === 'closed';
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="empty-state">No submissions in this category right now.</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(pr => {
+        let badgeClass = 'badge-queue';
+        let badgeText = 'WAITING IN QUEUE';
+        if (pr.status === 'accepted') {
+          badgeClass = 'badge-accepted';
+          badgeText = 'ACCEPTED & MERGED';
+        } else if (pr.status === 'closed') {
+          badgeClass = 'badge-closed';
+          badgeText = 'CLOSED / SUPERSEDED';
+        }
+
+        return `
+          <a class="pr-card" href="${pr.url}" target="_blank" rel="noopener">
+            <div class="pr-top">
+              <span class="badge ${badgeClass}">${badgeText}</span>
+              <span class="pr-meta">${pr.repo} <strong>#${pr.number}</strong> • Updated ${timeAgo(pr.updated_at)}</span>
+            </div>
+            <div class="pr-plain">${pr.plain}</div>
+            <div class="pr-tech">Technical title: ${pr.title}</div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    async function loadPRs() {
+      const url = 'https://api.github.com/search/issues?q=author:bradwue313+type:pr&sort=updated&order=desc&per_page=100';
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('GitHub API rate limit or network error');
+      const data = await res.json();
+
+      allPRs = (data.items || []).map(item => {
+        const repo = item.repository_url.split('/').slice(-2).join('/');
+        const isMerged = item.pull_request && item.pull_request.merged_at != null;
+        let status = 'open';
+        if (isMerged) status = 'accepted';
+        else if (item.state === 'closed') status = 'closed';
+
+        return {
+          number: item.number,
+          title: item.title,
+          plain: plainEnglishSummary(item.title, repo),
+          repo,
+          url: item.html_url,
+          status,
+          updated_at: item.updated_at
+        };
+      });
+
+      const acceptedCount = allPRs.filter(p => p.status === 'accepted').length;
+      const openCount = allPRs.filter(p => p.status === 'open').length;
+
+      document.getElementById('count-accepted').textContent = acceptedCount;
+      document.getElementById('count-open').textContent = openCount;
+      document.getElementById('count-total').textContent = allPRs.length;
+
+      renderPRs();
+    }
+
+    async function loadWallets() {
+      let totalUsd = 0;
+      try {
+        // Check Base USDC (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)
+        const baseRes = await fetch('https://mainnet.base.org', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'eth_call',
+            params: [{
+              to: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+              data: '0x70a0823100000000000000000000000038e0f40371be8b30f0909f890a1f701a25cd30cd'
+            }, 'latest']
+          })
+        });
+        const baseData = await baseRes.json();
+        const usdcRaw = parseInt(baseData.result || '0x0', 16);
+        const usdcVal = (usdcRaw / 1e6);
+        totalUsd += usdcVal;
+        document.getElementById('base-bal').textContent = `$${usdcVal.toFixed(2)} USDC`;
+      } catch (e) {
+        document.getElementById('base-bal').textContent = '$0.00 USDC';
+      }
+
+      try {
+        // Check Solana SOL balance
+        const solRes = await fetch('https://api.mainnet-beta.solana.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'getBalance',
+            params: ['CRdpAku2qovsPN2wGej5AbgMNtuhRQtq3GKFDFfMkJsv']
+          })
+        });
+        const solData = await solRes.json();
+        const lamports = (solData.result && solData.result.value) || 0;
+        const solVal = lamports / 1e9;
+        document.getElementById('sol-bal').textContent = `${solVal.toFixed(4)} SOL`;
+      } catch (e) {
+        document.getElementById('sol-bal').textContent = '0.0000 SOL';
+      }
+
+      document.getElementById('wallet-total').textContent = `$${totalUsd.toFixed(2)}`;
+      document.getElementById('wallet-sub').textContent = 'Live on-chain check';
+    }
+
+    async function loadAll() {
+      const btn = document.getElementById('refresh-btn');
+      btn.disabled = true;
+      btn.textContent = 'Refreshing...';
+      try {
+        await Promise.all([loadPRs(), loadWallets()]);
+        const now = new Date();
+        document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString()}`;
+      } catch (err) {
+        document.getElementById('last-updated').textContent = 'Update error — tap Refresh';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Refresh Now';
+      }
+    }
+
+    loadAll();
+    setInterval(loadAll, 60000);
+  </script>
+</body>
+</html>
