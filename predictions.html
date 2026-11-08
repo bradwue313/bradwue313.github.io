@@ -522,7 +522,7 @@ footer .wrap {
   <div class="hero">
     <p class="eyebrow"><span class="live-pulse"></span> Probabilistic Valuation & Settlement Engine</p>
     <h1>Percentage Range <em>Payout Predictions</em></h1>
-    <p class="lede">Continuous Bayesian & Monte Carlo projection across 31 verified compiler PRs ($15,500 USDC) and 11 formal Web3 security dossiers ($350,000 – $2.4M bounty potential). The system auto-updates every 30 seconds against the Base blockchain and GitHub API.</p>
+    <p class="lede">Continuous Bayesian & Monte Carlo projection across 31 verified compiler PRs ($15,500 USDC) and 12 formal Web3 security dossiers ($350,000 – $2.4M bounty potential). The system auto-updates every 30 seconds against the Base blockchain and GitHub API.</p>
   </div>
 
   <!-- Real-Time Auto-Updating Sync Bar -->
@@ -695,7 +695,7 @@ footer .wrap {
   <!-- Protocol & Compiler Valuation Matrix -->
   <section id="matrix">
     <h2 class="section-title">Audited Targets & Valuation Matrix</h2>
-    <p class="section-sub">Comprehensive overview of all 11 submitted formal audit dossiers and the Go-Hybrid compiler pipeline.</p>
+    <p class="section-sub">Comprehensive overview of all 12 submitted formal audit dossiers and the Go-Hybrid compiler pipeline.</p>
 
     <div style="overflow-x: auto;">
       <table class="matrix-table">
@@ -717,6 +717,14 @@ footer .wrap {
             <td style="font-family: 'IBM Plex Mono'; color: var(--green);">90% – 95%</td>
             <td style="font-family: 'IBM Plex Mono'; font-weight: 600; color: var(--accent);">$13,500 USDC</td>
             <td><span class="status-pill status-green">CI 100% Green / In Queue</span></td>
+          </tr>
+          <tr>
+            <td><strong>Uniswap V4 Core</strong><br><span style="font-size: 12px; color: var(--muted);">Target 12 · Singleton Hooks &amp; Accounting</span></td>
+            <td>UNIV4-01 / UNIV4-02 Formal Verification</td>
+            <td style="font-family: 'IBM Plex Mono'; font-weight: 500;">$3,000,000 USD</td>
+            <td style="font-family: 'IBM Plex Mono'; color: var(--yellow);">35%</td>
+            <td style="font-family: 'IBM Plex Mono'; font-weight: 600; color: var(--accent);">$65,000 USDC</td>
+            <td><span class="status-pill status-yellow">Security Audit Complete</span></td>
           </tr>
           <tr>
             <td><strong>Lido Finance</strong><br><span style="font-size: 12px; color: var(--muted);">Target 11 · Ethereum Staking</span></td>
@@ -845,6 +853,7 @@ function runSimulation() {
 
   // Defined audited protocol target values: [Target, MinPayout, MaxPayout]
   const protocols = [
+    { name: "Uniswap V4", min: 50000, max: 300000 },
     { name: "Lido", min: 30000, max: 200000 },
     { name: "Across", min: 25000, max: 150000 },
     { name: "GMX V2", min: 15000, max: 80000 },
