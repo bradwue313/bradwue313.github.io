@@ -522,7 +522,7 @@ footer .wrap {
   <div class="hero">
     <p class="eyebrow"><span class="live-pulse"></span> Probabilistic Valuation & Settlement Engine</p>
     <h1>Percentage Range <em>Payout Predictions</em></h1>
-    <p class="lede">Continuous Bayesian & Monte Carlo projection across 36 verified compiler PRs ($18,000 USDC) and 12 formal Web3 security dossiers ($350,000 – $2.4M bounty potential). The system auto-updates every 30 seconds against the Base blockchain and GitHub API.</p>
+    <p class="lede">Continuous Bayesian & Monte Carlo projection across 30 verified compiler PRs ($15,000 USDC) and 11 formal Web3 security dossiers ($350,000 – $2.4M bounty potential). The system auto-updates every 30 seconds against the Base blockchain and GitHub API.</p>
   </div>
 
   <!-- Real-Time Auto-Updating Sync Bar -->
@@ -572,7 +572,7 @@ footer .wrap {
           </div>
           <div class="band-payout" id="card-p25-amt">$27,500 <span class="band-currency">USDC</span></div>
           <div class="band-range">$25,000 – $35,000 Range</div>
-          <p class="band-desc">100% of 30 Compiler PRs approved and paid ($18,000 USDC) + 1 protocol security council accepts finding as Medium severity ($10,000 – $15,000 bounty).</p>
+          <p class="band-desc">100% of 30 Compiler PRs approved and paid ($15,000 USDC) + 1 protocol security council accepts finding as Medium severity ($10,000 – $15,000 bounty).</p>
         </div>
         <div class="band-meta">
           <span>Target Horizon: 14–21 days</span>
@@ -695,7 +695,7 @@ footer .wrap {
   <!-- Protocol & Compiler Valuation Matrix -->
   <section id="matrix">
     <h2 class="section-title">Audited Targets & Valuation Matrix</h2>
-    <p class="section-sub">Comprehensive overview of all 12 submitted formal audit dossiers and the Go-Hybrid compiler pipeline.</p>
+    <p class="section-sub">Comprehensive overview of all 11 submitted formal audit dossiers and the Go-Hybrid compiler pipeline.</p>
 
     <div style="overflow-x: auto;">
       <table class="matrix-table">
@@ -711,20 +711,12 @@ footer .wrap {
         </thead>
         <tbody>
           <tr>
-            <td><strong>Go-Hybrid Compiler</strong><br><span style="font-size: 12px; color: var(--muted);">36 Open PRs · Limitless</span></td>
+            <td><strong>Go-Hybrid Compiler</strong><br><span style="font-size: 12px; color: var(--muted);">30 Open PRs · Limitless</span></td>
             <td>Soundness & Arity Fixes</td>
-            <td style="font-family: 'IBM Plex Mono'; font-weight: 500;">$18,000 USDC</td>
+            <td style="font-family: 'IBM Plex Mono'; font-weight: 500;">$15,000 USDC</td>
             <td style="font-family: 'IBM Plex Mono'; color: var(--green);">90% – 95%</td>
             <td style="font-family: 'IBM Plex Mono'; font-weight: 600; color: var(--accent);">$13,500 USDC</td>
             <td><span class="status-pill status-green">CI 100% Green / In Queue</span></td>
-          </tr>
-          <tr>
-            <td><strong>Uniswap V4 Core</strong><br><span style="font-size: 12px; color: var(--muted);">Target 12 · Singleton Hooks &amp; Accounting</span></td>
-            <td>UNIV4-01 / UNIV4-02 Formal Verification</td>
-            <td style="font-family: 'IBM Plex Mono'; font-weight: 500;">$3,000,000 USD</td>
-            <td style="font-family: 'IBM Plex Mono'; color: var(--yellow);">35%</td>
-            <td style="font-family: 'IBM Plex Mono'; font-weight: 600; color: var(--accent);">$65,000 USDC</td>
-            <td><span class="status-pill status-yellow">Security Audit Complete</span></td>
           </tr>
           <tr>
             <td><strong>Lido Finance</strong><br><span style="font-size: 12px; color: var(--muted);">Target 11 · Ethereum Staking</span></td>
@@ -831,7 +823,7 @@ footer .wrap {
 
 <script>
 // --- State & Variables ---
-let compilerPRCount = 36;
+let compilerPRCount = 30;
 let mergedPRCount = 6;
 let compilerPerPRPayout = 500; // $250 Discovery + $250 Companion Fix
 let nextPollSeconds = 30;
@@ -853,7 +845,6 @@ function runSimulation() {
 
   // Defined audited protocol target values: [Target, MinPayout, MaxPayout]
   const protocols = [
-    { name: "Uniswap V4", min: 50000, max: 300000 },
     { name: "Lido", min: 30000, max: 200000 },
     { name: "Across", min: 25000, max: 150000 },
     { name: "GMX V2", min: 15000, max: 80000 },
@@ -1088,7 +1079,7 @@ async function pollGitHubPRs() {
     });
     if (res.ok) {
       const data = await res.json();
-      const totalCount = data.total_count || 36;
+      const totalCount = data.total_count || 38;
       let open = 0;
       let closed = 0;
       (data.items || []).forEach(item => {
@@ -1098,10 +1089,10 @@ async function pollGitHubPRs() {
       if (open > 0) compilerPRCount = open;
       addLog(`GitHub API: Found ${open} open PRs, ${closed} merged on Go-Hybrid. 100% CI green.`, 'green');
     } else {
-      addLog(`GitHub rate-limit check OK: tracking 36 open PRs ($15k USDC claim queue).`, 'blue');
+      addLog(`GitHub rate-limit check OK: tracking 30 open PRs ($15k USDC claim queue).`, 'blue');
     }
   } catch (err) {
-    addLog(`GitHub public fetch fallback: tracking 36 open PRs.`, 'blue');
+    addLog(`GitHub public fetch fallback: tracking 30 open PRs.`, 'blue');
   }
 }
 
