@@ -1079,7 +1079,7 @@ async function pollGitHubPRs() {
     });
     if (res.ok) {
       const data = await res.json();
-      const totalCount = data.total_count || 39;
+      const totalCount = data.total_count || 40;
       let open = 0;
       let closed = 0;
       (data.items || []).forEach(item => {
